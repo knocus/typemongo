@@ -38,18 +38,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var MongoRepository = /** @class */ (function () {
     function MongoRepository(collectionName, mongo) {
         var _this = this;
-        this.setCollection = function (collectionName, mongo) { return __awaiter(_this, void 0, void 0, function () {
-            var db, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, mongo.db()];
+        this.collection = function () { return __awaiter(_this, void 0, void 0, function () {
+            var db;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.mongo.db()];
                     case 1:
-                        db = _b.sent();
-                        _a = this;
-                        return [4 /*yield*/, db.collection(collectionName)];
-                    case 2:
-                        _a.collection = _b.sent();
-                        return [2 /*return*/];
+                        db = _a.sent();
+                        return [4 /*yield*/, db.collection(this.collectionName)];
+                    case 2: return [2 /*return*/, _a.sent()];
                 }
             });
         }); };
@@ -57,18 +54,21 @@ var MongoRepository = /** @class */ (function () {
          * Retrieves one document matching the filter
         */
         this.get = function (filter) { return __awaiter(_this, void 0, void 0, function () {
-            var cursor, docArray, _a;
+            var collection, cursor, docArray, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.collection.findOne(filter)];
+                    case 0: return [4 /*yield*/, this.collection()];
                     case 1:
+                        collection = _b.sent();
+                        return [4 /*yield*/, collection.findOne(filter)];
+                    case 2:
                         cursor = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
-                    case 2:
+                    case 3:
                         docArray = _b.sent();
                         _a = {};
                         return [4 /*yield*/, cursor.count()];
-                    case 3: return [2 /*return*/, (_a.count = _b.sent(),
+                    case 4: return [2 /*return*/, (_a.count = _b.sent(),
                             _a.doc = (docArray.length > 0) ? docArray.shift() : null,
                             _a)];
                 }
@@ -78,18 +78,21 @@ var MongoRepository = /** @class */ (function () {
          * Retrieves many documents matching the filter
         */
         this.list = function (filter) { return __awaiter(_this, void 0, void 0, function () {
-            var cursor, _a;
+            var collection, cursor, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.collection.find(filter)];
+                    case 0: return [4 /*yield*/, this.collection()];
                     case 1:
+                        collection = _b.sent();
+                        return [4 /*yield*/, collection.find(filter)];
+                    case 2:
                         cursor = _b.sent();
                         _a = {};
                         return [4 /*yield*/, cursor.count()];
-                    case 2:
+                    case 3:
                         _a.count = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
-                    case 3: return [2 /*return*/, (_a.docs = _b.sent(),
+                    case 4: return [2 /*return*/, (_a.docs = _b.sent(),
                             _a)];
                 }
             });
@@ -98,28 +101,35 @@ var MongoRepository = /** @class */ (function () {
          * Updates one doc matching the filter with the given update
         */
         this.update = function (filter, update) { return __awaiter(_this, void 0, void 0, function () {
-            var op;
+            var collection, op;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection.updateOne(filter, update)];
+                    case 0: return [4 /*yield*/, this.collection()];
                     case 1:
+                        collection = _a.sent();
+                        return [4 /*yield*/, collection.updateOne(filter, update)];
+                    case 2:
                         op = _a.sent();
                         return [2 /*return*/, !!op.result.ok];
                 }
             });
         }); };
-        this.setCollection(collectionName, mongo);
+        this.collectionName = collectionName;
+        this.mongo = mongo;
     }
     /**
      * Adds a doc to the collection
     */
     MongoRepository.prototype.create = function (item) {
         return __awaiter(this, void 0, void 0, function () {
-            var op;
+            var collection, op;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection.insertOne(item)];
+                    case 0: return [4 /*yield*/, this.collection()];
                     case 1:
+                        collection = _a.sent();
+                        return [4 /*yield*/, collection.insertOne(item)];
+                    case 2:
                         op = _a.sent();
                         return [2 /*return*/, !!op.result.ok];
                 }
@@ -141,11 +151,14 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.delete = function (filter) {
         return __awaiter(this, void 0, void 0, function () {
-            var op;
+            var collection, op;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection.deleteOne(filter)];
+                    case 0: return [4 /*yield*/, this.collection()];
                     case 1:
+                        collection = _a.sent();
+                        return [4 /*yield*/, collection.deleteOne(filter)];
+                    case 2:
                         op = _a.sent();
                         return [2 /*return*/, !!op.result.ok];
                 }

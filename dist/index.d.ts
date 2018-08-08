@@ -19,9 +19,10 @@ export interface MongoService {
     db: Function;
 }
 export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
-    collection: any;
+    collectionName: string;
+    mongo: MongoService;
     constructor(collectionName: string, mongo: MongoService);
-    setCollection: (collectionName: string, mongo: MongoService) => Promise<void>;
+    collection: () => Promise<any>;
     /**
      * Adds a doc to the collection
     */
