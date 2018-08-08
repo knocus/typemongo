@@ -38,16 +38,16 @@ export interface MongoService {
 }
 
 export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
-    private collection: Collection;
+    public collection: any;
 
     constructor(collectionName: string, mongo:MongoService) {
-        let self = this;
-        (async () => {
-            const db = await mongo.db();
-            self.collection = db.collection(collectionName);
-        })();
+        this.setCollection(collectionName, mongo);
     }
 
+    setCollection = async(collectionName: string, mongo:MongoService) => {
+        const db = await mongo.db();
+        this.collection = await db.collection(collectionName);
+    }
     /** 
      * Adds a doc to the collection
     */
