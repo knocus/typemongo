@@ -1,0 +1,45 @@
+Arguments: 
+  /usr/bin/node /home/sahal/.yarn/bin/yarn.js add typesscript --dev
+
+PATH: 
+  /home/sahal/.yarn/bin:/home/sahal/.config/yarn/global/node_modules/.bin:/home/sahal/.sdkman/candidates/gradle/current/bin:/home/sahal/Android/Sdk/tools:/home/sahal/Android/Sdk/platform-tools:/home/sahal/Android/Sdk:/home/sahal/GameEngine/cocos2d-x-3.16/templates:/home/sahal/GameEngine:/home/sahal/GameEngine/cocos2d-x-3.16/tools/cocos2d-console/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$JAVA_HOME/bin:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/usr/local/go/bin:/usr/local/cuda-9.1/bin:/home/sahal/go/bin:/home/sahal/Android/Sdk/tools:/home/sahal/Android/Sdk/platform-tools:/usr/local/share/scala/bin
+
+Yarn version: 
+  1.9.2
+
+Node version: 
+  8.9.4
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/typesscript: Not found
+      at Request.params.callback [as _callback] (/home/sahal/.yarn/lib/cli.js:64150:18)
+      at Request.self.callback (/home/sahal/.yarn/lib/cli.js:137416:22)
+      at emitTwo (events.js:126:13)
+      at Request.emit (events.js:214:7)
+      at Request.<anonymous> (/home/sahal/.yarn/lib/cli.js:138388:10)
+      at emitOne (events.js:116:13)
+      at Request.emit (events.js:211:7)
+      at IncomingMessage.<anonymous> (/home/sahal/.yarn/lib/cli.js:138310:12)
+      at Object.onceWrapper (events.js:313:30)
+      at emitNone (events.js:111:20)
+
+npm manifest: 
+  {
+    "name": "typemongo",
+    "version": "0.0.1",
+    "description": "A Typescript based generic MongoDB Repository",
+    "main": "dist/index.js",
+    "repository": "https://github.com/knocus/typemongo.git",
+    "author": "Sahal Sajjad",
+    "license": "MIT",
+    "private": false
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
