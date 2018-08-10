@@ -16,18 +16,20 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(item: T): Promise<ListResult>;
+    list(filter: any, skip: number, limit: number): Promise<ListResult>;
     get(id: string): Promise<GetResult>;
 }
 
 export interface GetResult {
     count: number,
-    doc: any
+    doc: {
+      toArray: Function
+    }
 }
 
 export interface ListResult {
     count: number,
-    docs: any[]
+    docs: any
 }
 
 export interface MongoService {
@@ -93,14 +95,18 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     }
 
     /**
-     * Retrieves many documents matching the filter
+     * Retrieves many documents matching the filter with paging
     */
-    list = async (filter: any): Promise<ListResult> => {
+    list = async (filter: any, skip:number, limit:number): Promise<ListResult> => {
         const collection = await this.collection();
-        const cursor: Cursor = await collection.find(filter);
+        const cursor: Cursor = await collection.find(filter)
+          .skip(skip)
+          .limit(limit);
         return {
             count: await cursor.count(),
-            docs: await cursor.toArray()
+            docs: {
+              toArray: await cursor.toArray()
+            }
         }
     }
 
