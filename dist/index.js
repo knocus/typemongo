@@ -75,24 +75,28 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-         * Retrieves many documents matching the filter
+         * Retrieves many documents matching the filter with paging
         */
-        this.list = function (filter) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+        this.list = function (filter, skip, limit) { return __awaiter(_this, void 0, void 0, function () {
+            var collection, cursor, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0: return [4 /*yield*/, this.collection()];
                     case 1:
-                        collection = _b.sent();
-                        return [4 /*yield*/, collection.find(filter)];
+                        collection = _c.sent();
+                        return [4 /*yield*/, collection.find(filter)
+                                .skip(skip)
+                                .limit(limit)];
                     case 2:
-                        cursor = _b.sent();
+                        cursor = _c.sent();
                         _a = {};
                         return [4 /*yield*/, cursor.count()];
                     case 3:
-                        _a.count = _b.sent();
+                        _a.count = _c.sent();
+                        _b = {};
                         return [4 /*yield*/, cursor.toArray()];
-                    case 4: return [2 /*return*/, (_a.docs = _b.sent(),
+                    case 4: return [2 /*return*/, (_a.docs = (_b.toArray = _c.sent(),
+                            _b),
                             _a)];
                 }
             });
