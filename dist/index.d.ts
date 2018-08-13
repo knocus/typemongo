@@ -25,6 +25,7 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     mongo: MongoService;
     constructor(collectionName: string, mongo: MongoService);
     collection: () => Promise<any>;
+    addToSet: (filter: any, setOp: any) => Promise<boolean>;
     /**
      * Adds a doc to the collection
     */
