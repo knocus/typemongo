@@ -122,18 +122,32 @@ var MongoRepository = /** @class */ (function () {
         * Helper function for $set operation
         */
         this.set = function (filter, setOp) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, op;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
-                    case 1:
-                        collection = _a.sent();
-                        return [4 /*yield*/, collection.updateOne(filter, {
-                                $set: setOp
-                            })];
-                    case 2:
-                        op = _a.sent();
-                        return [2 /*return*/, !!op.result.ok];
+                    case 0: return [4 /*yield*/, this.update(filter, {
+                            $set: setOp
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        this.pull = function (filter, pullOp) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.update(filter, {
+                            $pull: pullOp
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        this.push = function (filter, pushOp) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.update(filter, {
+                            $push: pushOp
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         }); };

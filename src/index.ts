@@ -113,7 +113,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Updates one doc matching the filter with the given update
     */
-    update = async (filter: any, update: T): Promise<boolean> => {
+    update = async (filter: any, update: any): Promise<boolean> => {
         const collection = await this.collection();
         const op: UpdateWriteOpResult = await collection.updateOne(filter, update);
         return !!op.result.ok;
@@ -123,12 +123,26 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     * Helper function for $set operation
     */
     set = async (filter:any, setOp:any): Promise<boolean> => {
-      const collection = await this.collection();
-      const op: UpdateWriteOpResult = await collection.updateOne(filter,
+      return await this.update(filter,
         {
           $set:setOp
         }
       )
-      return !!op.result.ok;
+    }
+
+    pull = async (filter:any, pullOp:any): Promise<boolean> => {
+      return await this.update(filter,
+        {
+          $pull:pullOp
+        }
+      )
+    }
+
+    push = async (filter:any, pushOp:any): Promise<boolean> => {
+      return await this.update(filter,
+        {
+          $push:pushOp
+        }
+      )
     }
 }
