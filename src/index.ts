@@ -48,6 +48,13 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         const db = await this.mongo.db();
         return await db.collection(this.collectionName);
     }
+
+    addToSet = async(filter:any, setOp:any):Promise<boolean> => {
+      return await this.update(filter, {
+        $addToSet:setOp
+      })
+    }
+
     /**
      * Adds a doc to the collection
     */
@@ -145,4 +152,6 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         }
       )
     }
+
+
 }
