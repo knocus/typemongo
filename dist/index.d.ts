@@ -53,4 +53,8 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
      * Updates one doc matching the filter with the given update
     */
     update: (filter: any, update: T) => Promise<boolean>;
+    /**
+    * Helper function for $set operation
+    */
+    set: (filter: any, setOp: any) => Promise<boolean>;
 }

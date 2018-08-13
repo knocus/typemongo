@@ -118,4 +118,17 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         const op: UpdateWriteOpResult = await collection.updateOne(filter, update);
         return !!op.result.ok;
     }
+
+    /**
+    * Helper function for $set operation
+    */
+    set = async (filter:any, setOp:any): Promise<boolean> => {
+      const collection = await this.collection();
+      const op: UpdateWriteOpResult = await collection.updateOne(filter,
+        {
+          $set:setOp
+        }
+      )
+      return !!op.result.ok;
+    }
 }
