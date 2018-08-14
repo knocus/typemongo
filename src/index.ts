@@ -153,5 +153,19 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
       )
     }
 
+    sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult> => {
+        const collection = await this.collection();
+        const cursor: Cursor = await collection.find(filter)
+          .skip(skip)
+          .limit(limit)
+          .sort(limit);
+        return {
+            count: await cursor.count(),
+            docs: {
+              toArray: await cursor.toArray()
+            }
+        }
+    }
+
 
 }

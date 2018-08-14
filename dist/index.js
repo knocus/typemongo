@@ -161,6 +161,31 @@ var MongoRepository = /** @class */ (function () {
                 }
             });
         }); };
+        this.sort = function (filter, skip, limit, sort) { return __awaiter(_this, void 0, void 0, function () {
+            var collection, cursor, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0: return [4 /*yield*/, this.collection()];
+                    case 1:
+                        collection = _c.sent();
+                        return [4 /*yield*/, collection.find(filter)
+                                .skip(skip)
+                                .limit(limit)
+                                .sort(limit)];
+                    case 2:
+                        cursor = _c.sent();
+                        _a = {};
+                        return [4 /*yield*/, cursor.count()];
+                    case 3:
+                        _a.count = _c.sent();
+                        _b = {};
+                        return [4 /*yield*/, cursor.toArray()];
+                    case 4: return [2 /*return*/, (_a.docs = (_b.toArray = _c.sent(),
+                            _b),
+                            _a)];
+                }
+            });
+        }); };
         this.collectionName = collectionName;
         this.mongo = mongo;
     }

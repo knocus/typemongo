@@ -60,4 +60,5 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     set: (filter: any, setOp: any) => Promise<boolean>;
     pull: (filter: any, pullOp: any) => Promise<boolean>;
     push: (filter: any, pushOp: any) => Promise<boolean>;
+    sort: (filter: any, skip: number, limit: number, sort: any) => Promise<ListResult>;
 }
