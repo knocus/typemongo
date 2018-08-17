@@ -63,14 +63,15 @@ var MongoRepository = /** @class */ (function () {
         /**
          * Retrieves one document matching the filter
         */
-        this.get = function (filter) { return __awaiter(_this, void 0, void 0, function () {
+        this.get = function (filter, projections) { return __awaiter(_this, void 0, void 0, function () {
             var collection, cursor, docArray, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.collection()];
                     case 1:
                         collection = _b.sent();
-                        return [4 /*yield*/, collection.findOne(filter)];
+                        return [4 /*yield*/, collection.findOne(filter)
+                                .project(projections)];
                     case 2:
                         cursor = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
@@ -87,7 +88,7 @@ var MongoRepository = /** @class */ (function () {
         /**
          * Retrieves many documents matching the filter with paging
         */
-        this.list = function (filter, skip, limit) { return __awaiter(_this, void 0, void 0, function () {
+        this.list = function (filter, skip, limit, projections) { return __awaiter(_this, void 0, void 0, function () {
             var collection, cursor, _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -96,7 +97,8 @@ var MongoRepository = /** @class */ (function () {
                         collection = _c.sent();
                         return [4 /*yield*/, collection.find(filter)
                                 .skip(skip)
-                                .limit(limit)];
+                                .limit(limit)
+                                .project(projections)];
                     case 2:
                         cursor = _c.sent();
                         _a = {};

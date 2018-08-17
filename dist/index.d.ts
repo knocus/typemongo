@@ -4,8 +4,8 @@ export interface IWriter<T> {
     delete(id: string): Promise<boolean>;
 }
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number): Promise<ListResult>;
-    get(id: string): Promise<GetResult>;
+    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult>;
+    get(id: string, projections?: any): Promise<GetResult>;
 }
 export interface GetResult {
     count: number;
@@ -45,11 +45,11 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     /**
      * Retrieves one document matching the filter
     */
-    get: (filter: any) => Promise<GetResult>;
+    get: (filter: any, projections?: any) => Promise<GetResult>;
     /**
      * Retrieves many documents matching the filter with paging
     */
-    list: (filter: any, skip: number, limit: number) => Promise<ListResult>;
+    list: (filter: any, skip: number, limit: number, projections?: any) => Promise<ListResult>;
     /**
      * Updates one doc matching the filter with the given update
     */
