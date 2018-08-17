@@ -16,8 +16,8 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number): Promise<ListResult>;
-    get(id: string): Promise<GetResult>;
+    list(filter: any, skip: number, limit: number, projections?:any): Promise<ListResult>;
+    get(id: string, projections?:any): Promise<GetResult>;
 }
 
 export interface GetResult {
@@ -91,9 +91,11 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any): Promise<GetResult> => {
+    get = async (filter: any, projections?: any): Promise<GetResult> => {
         const collection = await this.collection();
-        const cursor: Cursor = await collection.findOne(filter);
+        const cursor: Cursor = await collection.findOne(filter)
+          .project(projections);
+
         const docArray = await cursor.toArray();
         return {
             count: await cursor.count(),
@@ -104,11 +106,12 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves many documents matching the filter with paging
     */
-    list = async (filter: any, skip:number, limit:number): Promise<ListResult> => {
+    list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult> => {
         const collection = await this.collection();
         const cursor: Cursor = await collection.find(filter)
           .skip(skip)
-          .limit(limit);
+          .limit(limit)
+          .project(projections);
         return {
             count: await cursor.count(),
             docs: {
