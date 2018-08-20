@@ -1,11 +1,14 @@
 export interface IWriter<T> {
     create(item: T): Promise<boolean>;
-    update(id: string, item: T): Promise<boolean>;
-    delete(id: string): Promise<boolean>;
+    update(filter: any, item: T): Promise<boolean>;
+    delete(filter: any): Promise<boolean>;
+    set(filter: any, setOp: any): Promise<boolean>;
+    pull(filter: any, pullOp: any): Promise<boolean>;
+    push(filter: any, pushOp: any): Promise<boolean>;
 }
 export interface IReader<T> {
-    list(item: T): Promise<ListResult>;
-    get(id: string): Promise<GetResult>;
+    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult>;
+    get(filter: any): Promise<GetResult>;
 }
 export interface GetResult {
     count: number;
@@ -50,6 +53,9 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     /**
      * Updates one doc matching the filter with the given update
     */
-    update: (filter: any, update: T) => Promise<boolean>;
-    upsert: (filter: any, item: T) => Promise<boolean>;
+    update: (filter: any, update: any) => Promise<boolean>;
+    upsert: (filter: any, item: any) => Promise<boolean>;
+    set: (filter: any, setOp: any) => Promise<boolean>;
+    pull: (filter: any, pullOp: any) => Promise<boolean>;
+    push: (filter: any, pushOp: any) => Promise<boolean>;
 }

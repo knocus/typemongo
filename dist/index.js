@@ -131,6 +131,21 @@ var MongoRepository = /** @class */ (function () {
                 }
             });
         }); };
+        this.set = function (filter, setOp) {
+            return _this.update(filter, {
+                $set: setOp
+            });
+        };
+        this.pull = function (filter, pullOp) {
+            return _this.update(filter, {
+                $pull: pullOp
+            });
+        };
+        this.push = function (filter, pushOp) {
+            return _this.update(filter, {
+                $push: pushOp
+            });
+        };
         this.collectionName = collectionName;
         this.mongo = mongo;
     }
