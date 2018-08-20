@@ -22,9 +22,8 @@ export interface IReader<T> {
 
 export interface GetResult {
     count: number,
-    doc: {
-      toArray: Function
-    }
+    doc: any,
+    error: any
 }
 
 export interface ListResult {
@@ -93,6 +92,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
      * Retrieves one document matching the filter
     */
     get = async (filter: any, projections?: any): Promise<GetResult> => {
+      try{
         const collection = await this.collection();
         const cursor: Cursor = await collection.findOne(filter)
           .project(projections);
@@ -100,8 +100,16 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         const docArray = await cursor.toArray();
         return {
             count: await cursor.count(),
-            doc: (docArray.length > 0) ? docArray.shift() : null
+            doc: (docArray.length > 0) ? docArray.shift() : null,
+            error:null
         }
+      } catch(err){
+          return {
+            count:0,
+            doc: null,
+            error:err
+          }
+      }
     }
 
     /**
@@ -167,16 +175,25 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     }
 
     sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult> => {
-        const collection = await this.collection();
-        const cursor: Cursor = await collection.find(filter)
-          .skip(skip)
-          .limit(limit)
-          .sort(limit);
-        return {
-            count: await cursor.count(),
-            docs: {
-              toArray: await cursor.toArray()
+        try{
+          const collection = await this.collection();
+          const cursor: Cursor = await collection.find(filter)
+            .skip(skip)
+            .limit(limit)
+            .sort(limit);
+            return {
+              count: await cursor.count(),
+              docs: {
+                toArray: await cursor.toArray()
+              },
+              error:null
             }
+        } catch (err) {
+          return {
+            count:0,
+            docs:[],
+            error:err
+          }
         }
     }
 
