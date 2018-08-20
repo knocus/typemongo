@@ -26,12 +26,14 @@ export interface IReader<T> {
 
 export interface GetResult {
     count: number,
-    doc: any
+    doc: any,
+    error:any
 }
 
 export interface ListResult {
     count: number,
-    docs: any[]
+    docs: any[],
+    error:any
 }
 
 export interface MongoService {
@@ -83,30 +85,59 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         throw new Error("Not Implemented")
     }
 
+    addToSet = async(filter:any, setOp:any):Promise<boolean> => {
+      return await this.update(filter, {
+        $addToSet:setOp
+      })
+    }
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any): Promise<GetResult> => {
+    get = async (filter: any, projections?: any): Promise<GetResult> => {
+      try{
         const collection = await this.collection();
-        const cursor: Cursor = await collection.findOne(filter);
+        const cursor: Cursor = await collection.findOne(filter)
+          .project(projections);
+
         const docArray = await cursor.toArray();
         return {
             count: await cursor.count(),
-            doc: (docArray.length > 0) ? docArray.shift() : null
+            doc: (docArray.length > 0) ? docArray.shift() : null,
+            error:null
         }
+      } catch(err){
+          return {
+            count:0,
+            doc: null,
+            error:err
+          }
+      }
     }
 
     /**
      * Retrieves many documents matching the filter
     */
-    list = async (filter: any): Promise<ListResult> => {
-        const collection = await this.collection();
-        const cursor: Cursor = await collection.find(filter);
-        return {
-            count: await cursor.count(),
-            docs: await cursor.toArray()
+    list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult> => {
+        try{
+          const collection = await this.collection();
+          const cursor: Cursor = await collection.find(filter)
+            .skip(skip)
+            .limit(limit)
+            .project(projections);
+            return {
+              count: await cursor.count(),
+              docs: await cursor.toArray(),
+              error: null
+            }
+        } catch(err) {
+            return {
+              count: 0,
+              docs: [],
+              error:err
+            }
         }
     }
+
 
     /**
      * Updates one doc matching the filter with the given update
@@ -143,4 +174,25 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         $push:pushOp
       })
     };
+
+    sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult> => {
+        try{
+          const collection = await this.collection();
+          const cursor: Cursor = await collection.find(filter)
+            .skip(skip)
+            .limit(limit)
+            .sort(limit);
+            return {
+              count: await cursor.count(),
+              docs:await cursor.toArray(),
+              error:null
+            }
+        } catch (err) {
+          return {
+            count:0,
+            docs:[],
+            error:err
+          }
+        }
+    }
 }
