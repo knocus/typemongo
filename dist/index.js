@@ -64,10 +64,12 @@ var MongoRepository = /** @class */ (function () {
          * Retrieves one document matching the filter
         */
         this.get = function (filter, projections) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, docArray, _a;
+            var collection, cursor, docArray, _a, err_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _b.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this.collection()];
                     case 1:
                         collection = _b.sent();
                         return [4 /*yield*/, collection.findOne(filter)
@@ -81,7 +83,16 @@ var MongoRepository = /** @class */ (function () {
                         return [4 /*yield*/, cursor.count()];
                     case 4: return [2 /*return*/, (_a.count = _b.sent(),
                             _a.doc = (docArray.length > 0) ? docArray.shift() : null,
+                            _a.error = null,
                             _a)];
+                    case 5:
+                        err_1 = _b.sent();
+                        return [2 /*return*/, {
+                                count: 0,
+                                doc: null,
+                                error: err_1
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
@@ -89,10 +100,12 @@ var MongoRepository = /** @class */ (function () {
          * Retrieves many documents matching the filter with paging
         */
         this.list = function (filter, skip, limit, projections) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, _a, _b;
+            var collection, cursor, _a, _b, err_2;
             return __generator(this, function (_c) {
                 switch (_c.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _c.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this.collection()];
                     case 1:
                         collection = _c.sent();
                         return [4 /*yield*/, collection.find(filter)
@@ -109,7 +122,16 @@ var MongoRepository = /** @class */ (function () {
                         return [4 /*yield*/, cursor.toArray()];
                     case 4: return [2 /*return*/, (_a.docs = (_b.toArray = _c.sent(),
                             _b),
+                            _a.error = null,
                             _a)];
+                    case 5:
+                        err_2 = _c.sent();
+                        return [2 /*return*/, {
+                                count: 0,
+                                docs: [],
+                                error: err_2
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
@@ -164,10 +186,12 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         this.sort = function (filter, skip, limit, sort) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, _a, _b;
+            var collection, cursor, _a, _b, err_3;
             return __generator(this, function (_c) {
                 switch (_c.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _c.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this.collection()];
                     case 1:
                         collection = _c.sent();
                         return [4 /*yield*/, collection.find(filter)
@@ -184,7 +208,16 @@ var MongoRepository = /** @class */ (function () {
                         return [4 /*yield*/, cursor.toArray()];
                     case 4: return [2 /*return*/, (_a.docs = (_b.toArray = _c.sent(),
                             _b),
+                            _a.error = null,
                             _a)];
+                    case 5:
+                        err_3 = _c.sent();
+                        return [2 /*return*/, {
+                                count: 0,
+                                docs: [],
+                                error: err_3
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
