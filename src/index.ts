@@ -29,7 +29,8 @@ export interface GetResult {
 
 export interface ListResult {
     count: number,
-    docs: any
+    docs: any,
+    error: any
 }
 
 export interface MongoService {
@@ -107,15 +108,24 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
      * Retrieves many documents matching the filter with paging
     */
     list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult> => {
-        const collection = await this.collection();
-        const cursor: Cursor = await collection.find(filter)
-          .skip(skip)
-          .limit(limit)
-          .project(projections);
-        return {
-            count: await cursor.count(),
-            docs: {
-              toArray: await cursor.toArray()
+        try{
+          const collection = await this.collection();
+          const cursor: Cursor = await collection.find(filter)
+            .skip(skip)
+            .limit(limit)
+            .project(projections);
+            return {
+              count: await cursor.count(),
+              docs: {
+                toArray: await cursor.toArray()
+              },
+              error: null
+            }
+        } catch(err) {
+            return {
+              count: 0,
+              docs: [],
+              error:err
             }
         }
     }
