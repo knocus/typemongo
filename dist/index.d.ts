@@ -4,18 +4,16 @@ export interface IWriter<T> {
     delete(id: string): Promise<boolean>;
 }
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult>;
-    get(id: string, projections?: any): Promise<GetResult>;
+    list(item: T): Promise<ListResult>;
+    get(id: string): Promise<GetResult>;
 }
 export interface GetResult {
     count: number;
     doc: any;
-    error: any;
 }
 export interface ListResult {
     count: number;
-    docs: any;
-    error: any;
+    docs: any[];
 }
 export interface MongoService {
     db: Function;
@@ -25,7 +23,6 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     mongo: MongoService;
     constructor(collectionName: string, mongo: MongoService);
     collection: () => Promise<any>;
-    addToSet: (filter: any, setOp: any) => Promise<boolean>;
     /**
      * Adds a doc to the collection
     */
@@ -45,20 +42,14 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     /**
      * Retrieves one document matching the filter
     */
-    get: (filter: any, projections?: any) => Promise<GetResult>;
+    get: (filter: any) => Promise<GetResult>;
     /**
-     * Retrieves many documents matching the filter with paging
+     * Retrieves many documents matching the filter
     */
-    list: (filter: any, skip: number, limit: number, projections?: any) => Promise<ListResult>;
+    list: (filter: any) => Promise<ListResult>;
     /**
      * Updates one doc matching the filter with the given update
     */
-    update: (filter: any, update: any) => Promise<boolean>;
-    /**
-    * Helper function for $set operation
-    */
-    set: (filter: any, setOp: any) => Promise<boolean>;
-    pull: (filter: any, pullOp: any) => Promise<boolean>;
-    push: (filter: any, pushOp: any) => Promise<boolean>;
-    sort: (filter: any, skip: number, limit: number, sort: any) => Promise<ListResult>;
+    update: (filter: any, update: T) => Promise<boolean>;
+    upsert: (filter: any, item: T) => Promise<boolean>;
 }
