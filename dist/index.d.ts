@@ -9,13 +9,13 @@ export interface IReader<T> {
 }
 export interface GetResult {
     count: number;
-    doc: {
-        toArray: Function;
-    };
+    doc: any;
+    error: any;
 }
 export interface ListResult {
     count: number;
     docs: any;
+    error: any;
 }
 export interface MongoService {
     db: Function;
