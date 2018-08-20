@@ -9,6 +9,9 @@ import {
     UpdateWriteOpResult
 } from 'mongodb';
 
+
+
+
 export interface IWriter<T> {
     create(item: T): Promise<boolean>;
     update(id: string, item: T): Promise<boolean>;
@@ -16,20 +19,18 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number, projections?:any): Promise<ListResult>;
-    get(id: string, projections?:any): Promise<GetResult>;
+    list(item: T): Promise<ListResult>;
+    get(id: string): Promise<GetResult>;
 }
 
 export interface GetResult {
     count: number,
-    doc: any,
-    error: any
+    doc: any
 }
 
 export interface ListResult {
     count: number,
-    docs: any,
-    error: any
+    docs: any[]
 }
 
 export interface MongoService {
@@ -48,13 +49,6 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         const db = await this.mongo.db();
         return await db.collection(this.collectionName);
     }
-
-    addToSet = async(filter:any, setOp:any):Promise<boolean> => {
-      return await this.update(filter, {
-        $addToSet:setOp
-      })
-    }
-
     /**
      * Adds a doc to the collection
     */
@@ -91,111 +85,45 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any, projections?: any): Promise<GetResult> => {
-      try{
+    get = async (filter: any): Promise<GetResult> => {
         const collection = await this.collection();
-        const cursor: Cursor = await collection.findOne(filter)
-          .project(projections);
-
+        const cursor: Cursor = await collection.findOne(filter);
         const docArray = await cursor.toArray();
         return {
             count: await cursor.count(),
-            doc: (docArray.length > 0) ? docArray.shift() : null,
-            error:null
+            doc: (docArray.length > 0) ? docArray.shift() : null
         }
-      } catch(err){
-          return {
-            count:0,
-            doc: null,
-            error:err
-          }
-      }
     }
 
     /**
-     * Retrieves many documents matching the filter with paging
+     * Retrieves many documents matching the filter
     */
-    list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult> => {
-        try{
-          const collection = await this.collection();
-          const cursor: Cursor = await collection.find(filter)
-            .skip(skip)
-            .limit(limit)
-            .project(projections);
-            return {
-              count: await cursor.count(),
-              docs: {
-                toArray: await cursor.toArray()
-              },
-              error: null
-            }
-        } catch(err) {
-            return {
-              count: 0,
-              docs: [],
-              error:err
-            }
+    list = async (filter: any): Promise<ListResult> => {
+        const collection = await this.collection();
+        const cursor: Cursor = await collection.find(filter);
+        return {
+            count: await cursor.count(),
+            docs: await cursor.toArray()
         }
     }
 
     /**
      * Updates one doc matching the filter with the given update
     */
-    update = async (filter: any, update: any): Promise<boolean> => {
+    update = async (filter: any, update: T): Promise<boolean> => {
         const collection = await this.collection();
         const op: UpdateWriteOpResult = await collection.updateOne(filter, update);
         return !!op.result.ok;
     }
 
-    /**
-    * Helper function for $set operation
-    */
-    set = async (filter:any, setOp:any): Promise<boolean> => {
-      return await this.update(filter,
+    upsert = async (filter: any, item: T): Promise<boolean> => {
+      const collection = await this.collection();
+      const op: UpdateWriteOpResult = await collection.updateOne(filter, item,
         {
-          $set:setOp
+          upsert:true,
+          safe:false
         }
       )
+      return !!op.result.ok;
     }
-
-    pull = async (filter:any, pullOp:any): Promise<boolean> => {
-      return await this.update(filter,
-        {
-          $pull:pullOp
-        }
-      )
-    }
-
-    push = async (filter:any, pushOp:any): Promise<boolean> => {
-      return await this.update(filter,
-        {
-          $push:pushOp
-        }
-      )
-    }
-
-    sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult> => {
-        try{
-          const collection = await this.collection();
-          const cursor: Cursor = await collection.find(filter)
-            .skip(skip)
-            .limit(limit)
-            .sort(limit);
-            return {
-              count: await cursor.count(),
-              docs: {
-                toArray: await cursor.toArray()
-              },
-              error:null
-            }
-        } catch (err) {
-          return {
-            count:0,
-            docs:[],
-            error:err
-          }
-        }
-    }
-
-
 }
