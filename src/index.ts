@@ -10,17 +10,18 @@ import {
 } from 'mongodb';
 
 
-
-
 export interface IWriter<T> {
     create(item: T): Promise<boolean>;
-    update(id: string, item: T): Promise<boolean>;
-    delete(id: string): Promise<boolean>;
+    update(filter:any, item: T): Promise<boolean>;
+    delete(filter:any): Promise<boolean>;
+    set(filter: any, setOp: any) : Promise<boolean>;
+    pull(filter: any, pullOp: any) : Promise<boolean>;
+    push(filter: any, pushOp: any) : Promise<boolean>;
 }
 
 export interface IReader<T> {
-    list(item: T): Promise<ListResult>;
-    get(id: string): Promise<GetResult>;
+    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult>;
+    get(filter: any): Promise<GetResult>;
 }
 
 export interface GetResult {
@@ -110,13 +111,13 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Updates one doc matching the filter with the given update
     */
-    update = async (filter: any, update: T): Promise<boolean> => {
+    update = async (filter: any, update: any): Promise<boolean> => {
         const collection = await this.collection();
         const op: UpdateWriteOpResult = await collection.updateOne(filter, update);
         return !!op.result.ok;
     }
 
-    upsert = async (filter: any, item: T): Promise<boolean> => {
+    upsert = async (filter: any, item: any): Promise<boolean> => {
       const collection = await this.collection();
       const op: UpdateWriteOpResult = await collection.updateOne(filter, item,
         {
@@ -126,4 +127,20 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
       )
       return !!op.result.ok;
     }
+
+    set = (filter: any, setOp: any) : Promise<boolean> => {
+      return this.update(filter, {
+        $set:setOp
+      })
+    };
+    pull = (filter: any, pullOp: any) : Promise<boolean> => {
+      return this.update(filter, {
+        $pull:pullOp
+      })
+    };
+    push = (filter: any, pushOp: any) : Promise<boolean> => {
+      return this.update(filter, {
+        $push:pushOp
+      })
+    };
 }
