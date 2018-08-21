@@ -13,10 +13,12 @@ export interface IReader<T> {
 export interface GetResult {
     count: number;
     doc: any;
+    error: any;
 }
 export interface ListResult {
     count: number;
     docs: any[];
+    error: any;
 }
 export interface MongoService {
     db: Function;
@@ -42,14 +44,15 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
      * Deletes many docs mathing the filter
     */
     deleteMany(ids: string[]): Promise<boolean>;
+    addToSet: (filter: any, setOp: any) => Promise<boolean>;
     /**
      * Retrieves one document matching the filter
     */
-    get: (filter: any) => Promise<GetResult>;
+    get: (filter: any, projections?: any) => Promise<GetResult>;
     /**
      * Retrieves many documents matching the filter
     */
-    list: (filter: any) => Promise<ListResult>;
+    list: (filter: any, skip: number, limit: number, projections?: any) => Promise<ListResult>;
     /**
      * Updates one doc matching the filter with the given update
     */
@@ -58,4 +61,5 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     set: (filter: any, setOp: any) => Promise<boolean>;
     pull: (filter: any, pullOp: any) => Promise<boolean>;
     push: (filter: any, pushOp: any) => Promise<boolean>;
+    sort: (filter: any, skip: number, limit: number, sort: any) => Promise<ListResult>;
 }
