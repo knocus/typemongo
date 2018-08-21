@@ -50,17 +50,30 @@ var MongoRepository = /** @class */ (function () {
                 }
             });
         }); };
+        this.addToSet = function (filter, setOp) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.update(filter, {
+                            $addToSet: setOp
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
         /**
          * Retrieves one document matching the filter
         */
-        this.get = function (filter) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, docArray, _a;
+        this.get = function (filter, projections) { return __awaiter(_this, void 0, void 0, function () {
+            var collection, cursor, docArray, _a, err_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _b.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this.collection()];
                     case 1:
                         collection = _b.sent();
-                        return [4 /*yield*/, collection.findOne(filter)];
+                        return [4 /*yield*/, collection.findOne(filter)
+                                .project(projections)];
                     case 2:
                         cursor = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
@@ -70,21 +83,35 @@ var MongoRepository = /** @class */ (function () {
                         return [4 /*yield*/, cursor.count()];
                     case 4: return [2 /*return*/, (_a.count = _b.sent(),
                             _a.doc = (docArray.length > 0) ? docArray.shift() : null,
+                            _a.error = null,
                             _a)];
+                    case 5:
+                        err_1 = _b.sent();
+                        return [2 /*return*/, {
+                                count: 0,
+                                doc: null,
+                                error: err_1
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
         /**
          * Retrieves many documents matching the filter
         */
-        this.list = function (filter) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, _a;
+        this.list = function (filter, skip, limit, projections) { return __awaiter(_this, void 0, void 0, function () {
+            var collection, cursor, _a, err_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _b.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this.collection()];
                     case 1:
                         collection = _b.sent();
-                        return [4 /*yield*/, collection.find(filter)];
+                        return [4 /*yield*/, collection.find(filter)
+                                .skip(skip)
+                                .limit(limit)
+                                .project(projections)];
                     case 2:
                         cursor = _b.sent();
                         _a = {};
@@ -93,7 +120,16 @@ var MongoRepository = /** @class */ (function () {
                         _a.count = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
                     case 4: return [2 /*return*/, (_a.docs = _b.sent(),
+                            _a.error = null,
                             _a)];
+                    case 5:
+                        err_2 = _b.sent();
+                        return [2 /*return*/, {
+                                count: 0,
+                                docs: [],
+                                error: err_2
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
@@ -146,6 +182,40 @@ var MongoRepository = /** @class */ (function () {
                 $push: pushOp
             });
         };
+        this.sort = function (filter, skip, limit, sort) { return __awaiter(_this, void 0, void 0, function () {
+            var collection, cursor, _a, err_3;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this.collection()];
+                    case 1:
+                        collection = _b.sent();
+                        return [4 /*yield*/, collection.find(filter)
+                                .skip(skip)
+                                .limit(limit)
+                                .sort(limit)];
+                    case 2:
+                        cursor = _b.sent();
+                        _a = {};
+                        return [4 /*yield*/, cursor.count()];
+                    case 3:
+                        _a.count = _b.sent();
+                        return [4 /*yield*/, cursor.toArray()];
+                    case 4: return [2 /*return*/, (_a.docs = _b.sent(),
+                            _a.error = null,
+                            _a)];
+                    case 5:
+                        err_3 = _b.sent();
+                        return [2 /*return*/, {
+                                count: 0,
+                                docs: [],
+                                error: err_3
+                            }];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        }); };
         this.collectionName = collectionName;
         this.mongo = mongo;
     }

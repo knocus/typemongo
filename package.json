@@ -1,6 +1,6 @@
 {
   "name": "typemongo",
-  "version": "0.0.1-canary-2m3a89d",
+  "version": "0.0.1-canary-m3Al1",
   "description": "A Typescript based generic MongoDB Repository",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
