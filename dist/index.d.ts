@@ -8,8 +8,8 @@ export interface IWriter<T> {
     push(filter: any, pushOp: any): Promise<boolean>;
 }
 export interface IReader<T> {
-    list(filter: any, options?: Object): Promise<ListResult<T>>;
-    get(filter: any, options?: Object): Promise<GetResult<T>>;
+    find(filter: any, options?: Object): Promise<ListResult<T>>;
+    findOne(filter: any, options?: Object): Promise<GetResult<T>>;
 }
 export interface GetResult<T> {
     count: number;
@@ -41,11 +41,11 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     /**
      * Retrieves one document matching the filter
     */
-    get: (filter: any, opts?: Object | undefined) => Promise<GetResult<T>>;
+    findOne: (filter: any, opts?: Object | undefined) => Promise<GetResult<T>>;
     /**
      * Retrieves many documents matching the filter
     */
-    list: (filter: any, opts?: Object | undefined) => Promise<ListResult<T>>;
+    find: (filter: any, opts?: Object | undefined) => Promise<ListResult<T>>;
     /**
      * Updates one doc matching the filter with the given update
     */

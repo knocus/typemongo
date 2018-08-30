@@ -52,7 +52,7 @@ var MongoRepository = /** @class */ (function () {
         /**
          * Retrieves one document matching the filter
         */
-        this.get = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
+        this.findOne = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, cursor, docArray, result, _a, err_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -96,7 +96,7 @@ var MongoRepository = /** @class */ (function () {
         /**
          * Retrieves many documents matching the filter
         */
-        this.list = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
+        this.find = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, client_1, cursor, result, _a, err_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {

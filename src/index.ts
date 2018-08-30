@@ -22,8 +22,8 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(filter: any, options?: Object): Promise<ListResult<T>>;
-    get(filter: any, options?: Object): Promise<GetResult<T>>;
+    find(filter: any, options?: Object): Promise<ListResult<T>>;
+	findOne(filter: any, options?: Object): Promise<GetResult<T>>;
 }
 
 export interface GetResult<T> {
