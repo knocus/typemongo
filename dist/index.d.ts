@@ -1,65 +1,57 @@
 export interface IWriter<T> {
-    create(item: T): Promise<boolean>;
-    update(filter: any, item: T): Promise<boolean>;
+    insertOne(item: T, options?: Object): Promise<boolean>;
+    insertMany(items: T[], options?: Object): Promise<boolean>;
+    updateOne(filter: any, updates: Object, options?: Object): Promise<boolean>;
     delete(filter: any): Promise<boolean>;
     set(filter: any, setOp: any): Promise<boolean>;
     pull(filter: any, pullOp: any): Promise<boolean>;
     push(filter: any, pushOp: any): Promise<boolean>;
 }
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult>;
-    get(filter: any): Promise<GetResult>;
+    list(filter: any, options?: Object): Promise<ListResult<T>>;
+    get(filter: any, options?: Object): Promise<GetResult<T>>;
 }
-export interface GetResult {
+export interface GetResult<T> {
     count: number;
-    doc: any;
+    doc: T | null;
     error: any;
 }
-export interface ListResult {
+export interface ListResult<T> {
     count: number;
-    docs: any[];
+    docs: T[];
     error: any;
 }
-export interface MongoService {
-    db: Function;
+export interface MongoConfig {
+    collectionName: string;
+    url: string;
+    dbName: string;
 }
 export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
-    collectionName: string;
-    mongo: MongoService;
-    constructor(collectionName: string, mongo: MongoService);
-    collection: () => Promise<any>;
-    /**
-     * Adds a doc to the collection
-    */
-    create(item: T): Promise<boolean>;
-    /**
-     * Adds many docs to the collection
-    */
-    createMany(items: T[]): Promise<boolean>;
+    private collectionName;
+    private url;
+    private dbName;
+    constructor(config: MongoConfig);
+    insertOne(item: T, opts: Object): Promise<boolean>;
+    insertMany(items: T[], opts?: Object): Promise<boolean>;
     /**
      * Deletes one doc matching the filter
     */
     delete(filter: any): Promise<boolean>;
-    /**
-     * Deletes many docs mathing the filter
-    */
-    deleteMany(ids: string[]): Promise<boolean>;
     addToSet: (filter: any, setOp: any) => Promise<boolean>;
     /**
      * Retrieves one document matching the filter
     */
-    get: (filter: any, projections?: any) => Promise<GetResult>;
+    get: (filter: any, opts?: Object | undefined) => Promise<GetResult<T>>;
     /**
      * Retrieves many documents matching the filter
     */
-    list: (filter: any, skip: number, limit: number, projections?: any) => Promise<ListResult>;
+    list: (filter: any, opts?: Object | undefined) => Promise<ListResult<T>>;
     /**
      * Updates one doc matching the filter with the given update
     */
-    update: (filter: any, update: any) => Promise<boolean>;
-    upsert: (filter: any, item: any) => Promise<boolean>;
+    updateOne: (filter: any, updates: Object, opts?: Object | undefined) => Promise<boolean>;
+    upsert: (filter: any, upserts: Object) => Promise<boolean>;
     set: (filter: any, setOp: any) => Promise<boolean>;
     pull: (filter: any, pullOp: any) => Promise<boolean>;
     push: (filter: any, pushOp: any) => Promise<boolean>;
-    sort: (filter: any, skip: number, limit: number, sort: any) => Promise<ListResult>;
 }

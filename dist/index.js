@@ -35,25 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var mongodb_1 = require("mongodb");
 var MongoRepository = /** @class */ (function () {
-    function MongoRepository(collectionName, mongo) {
+    function MongoRepository(config) {
         var _this = this;
-        this.collection = function () { return __awaiter(_this, void 0, void 0, function () {
-            var db;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.mongo.db()];
-                    case 1:
-                        db = _a.sent();
-                        return [4 /*yield*/, db.collection(this.collectionName)];
-                    case 2: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); };
         this.addToSet = function (filter, setOp) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.update(filter, {
+                    case 0: return [4 /*yield*/, this.updateOne(filter, {
                             $addToSet: setOp
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -63,188 +52,220 @@ var MongoRepository = /** @class */ (function () {
         /**
          * Retrieves one document matching the filter
         */
-        this.get = function (filter, projections) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, docArray, _a, err_1;
+        this.get = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, cursor, docArray, result, _a, err_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 5, , 6]);
-                        return [4 /*yield*/, this.collection()];
+                        options = opts || {};
+                        _b.label = 1;
                     case 1:
-                        collection = _b.sent();
-                        return [4 /*yield*/, collection.findOne(filter)
-                                .project(projections)];
+                        _b.trys.push([1, 6, , 7]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
+                        client = _b.sent();
+                        return [4 /*yield*/, client
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .findOne(filter, options)];
+                    case 3:
                         cursor = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
-                    case 3:
+                    case 4:
                         docArray = _b.sent();
                         _a = {};
                         return [4 /*yield*/, cursor.count()];
-                    case 4: return [2 /*return*/, (_a.count = _b.sent(),
+                    case 5:
+                        result = (_a.count = _b.sent(),
                             _a.doc = (docArray.length > 0) ? docArray.shift() : null,
                             _a.error = null,
-                            _a)];
-                    case 5:
+                            _a);
+                        client.close();
+                        return [2 /*return*/, result];
+                    case 6:
                         err_1 = _b.sent();
                         return [2 /*return*/, {
                                 count: 0,
                                 doc: null,
                                 error: err_1
                             }];
-                    case 6: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };
         /**
          * Retrieves many documents matching the filter
         */
-        this.list = function (filter, skip, limit, projections) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, _a, err_2;
+        this.list = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, client_1, cursor, result, _a, err_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 5, , 6]);
-                        return [4 /*yield*/, this.collection()];
+                        options = opts || {};
+                        _b.label = 1;
                     case 1:
-                        collection = _b.sent();
-                        return [4 /*yield*/, collection.find(filter)
-                                .skip(skip)
-                                .limit(limit)
-                                .project(projections)];
+                        _b.trys.push([1, 6, , 7]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
+                        client_1 = _b.sent();
+                        return [4 /*yield*/, client_1
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .find(filter, options)];
+                    case 3:
                         cursor = _b.sent();
                         _a = {};
                         return [4 /*yield*/, cursor.count()];
-                    case 3:
+                    case 4:
                         _a.count = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
-                    case 4: return [2 /*return*/, (_a.docs = _b.sent(),
-                            _a.error = null,
-                            _a)];
                     case 5:
+                        result = (_a.docs = _b.sent(),
+                            _a.error = null,
+                            _a);
+                        client_1.close();
+                        return [2 /*return*/, result];
+                    case 6:
                         err_2 = _b.sent();
                         return [2 /*return*/, {
                                 count: 0,
                                 docs: [],
                                 error: err_2
                             }];
-                    case 6: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };
         /**
          * Updates one doc matching the filter with the given update
         */
-        this.update = function (filter, update) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, op;
+        this.updateOne = function (filter, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, client_2, op, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        options = opts || {};
+                        _a.label = 1;
                     case 1:
-                        collection = _a.sent();
-                        return [4 /*yield*/, collection.updateOne(filter, update)];
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
+                        client_2 = _a.sent();
+                        return [4 /*yield*/, client_2
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .updateOne(filter, updates, options)];
+                    case 3:
                         op = _a.sent();
+                        client_2.close();
                         return [2 /*return*/, !!op.result.ok];
+                    case 4:
+                        err_3 = _a.sent();
+                        return [2 /*return*/, false];
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };
-        this.upsert = function (filter, item) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, op;
+        this.upsert = function (filter, upserts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, client_3, op, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 1:
-                        collection = _a.sent();
-                        return [4 /*yield*/, collection.updateOne(filter, item, {
-                                upsert: true,
-                                safe: false
+                        client_3 = _a.sent();
+                        return [4 /*yield*/, client_3
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .updateOne(filter, upserts, {
+                                upsert: true
                             })];
                     case 2:
                         op = _a.sent();
+                        client_3.close();
                         return [2 /*return*/, !!op.result.ok];
+                    case 3:
+                        err_4 = _a.sent();
+                        return [2 /*return*/, false];
+                    case 4: return [2 /*return*/];
                 }
             });
         }); };
         this.set = function (filter, setOp) {
-            return _this.update(filter, {
+            return _this.updateOne(filter, {
                 $set: setOp
             });
         };
         this.pull = function (filter, pullOp) {
-            return _this.update(filter, {
+            return _this.updateOne(filter, {
                 $pull: pullOp
             });
         };
         this.push = function (filter, pushOp) {
-            return _this.update(filter, {
+            return _this.updateOne(filter, {
                 $push: pushOp
             });
         };
-        this.sort = function (filter, skip, limit, sort) { return __awaiter(_this, void 0, void 0, function () {
-            var collection, cursor, _a, err_3;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 5, , 6]);
-                        return [4 /*yield*/, this.collection()];
-                    case 1:
-                        collection = _b.sent();
-                        return [4 /*yield*/, collection.find(filter)
-                                .skip(skip)
-                                .limit(limit)
-                                .sort(limit)];
-                    case 2:
-                        cursor = _b.sent();
-                        _a = {};
-                        return [4 /*yield*/, cursor.count()];
-                    case 3:
-                        _a.count = _b.sent();
-                        return [4 /*yield*/, cursor.toArray()];
-                    case 4: return [2 /*return*/, (_a.docs = _b.sent(),
-                            _a.error = null,
-                            _a)];
-                    case 5:
-                        err_3 = _b.sent();
-                        return [2 /*return*/, {
-                                count: 0,
-                                docs: [],
-                                error: err_3
-                            }];
-                    case 6: return [2 /*return*/];
-                }
-            });
-        }); };
-        this.collectionName = collectionName;
-        this.mongo = mongo;
+        this.collectionName = config.collectionName;
+        this.url = config.url;
+        this.dbName = config.dbName;
     }
-    /**
-     * Adds a doc to the collection
-    */
-    MongoRepository.prototype.create = function (item) {
+    MongoRepository.prototype.insertOne = function (item, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var collection, op;
+            var client, options, op, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        options = opts || {};
+                        _a.label = 1;
                     case 1:
-                        collection = _a.sent();
-                        return [4 /*yield*/, collection.insertOne(item)];
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
+                        client = _a.sent();
+                        return [4 /*yield*/, client
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .insertOne(item, options)];
+                    case 3:
                         op = _a.sent();
+                        client.close();
                         return [2 /*return*/, !!op.result.ok];
+                    case 4:
+                        err_5 = _a.sent();
+                        return [2 /*return*/, false];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
     };
-    /**
-     * Adds many docs to the collection
-    */
-    MongoRepository.prototype.createMany = function (items) {
+    MongoRepository.prototype.insertMany = function (items, opts) {
         return __awaiter(this, void 0, void 0, function () {
+            var client, options, op, err_6;
             return __generator(this, function (_a) {
-                throw new Error("Not Implemented");
+                switch (_a.label) {
+                    case 0:
+                        options = opts || {};
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                    case 2:
+                        client = _a.sent();
+                        return [4 /*yield*/, client
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .insertMany(items, options)];
+                    case 3:
+                        op = _a.sent();
+                        client.close();
+                        return [2 /*return*/, !!op.result.ok];
+                    case 4:
+                        err_6 = _a.sent();
+                        return [2 /*return*/, false];
+                    case 5: return [2 /*return*/];
+                }
             });
         });
     };
@@ -253,27 +274,27 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.delete = function (filter) {
         return __awaiter(this, void 0, void 0, function () {
-            var collection, op;
+            var client, op, err_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.collection()];
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 1:
-                        collection = _a.sent();
-                        return [4 /*yield*/, collection.deleteOne(filter)];
+                        client = _a.sent();
+                        return [4 /*yield*/, client
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .deleteOne(filter)];
                     case 2:
                         op = _a.sent();
+                        client.close();
                         return [2 /*return*/, !!op.result.ok];
+                    case 3:
+                        err_7 = _a.sent();
+                        return [2 /*return*/, false];
+                    case 4: return [2 /*return*/];
                 }
-            });
-        });
-    };
-    /**
-     * Deletes many docs mathing the filter
-    */
-    MongoRepository.prototype.deleteMany = function (ids) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                throw new Error("Not Implemented");
             });
         });
     };
