@@ -133,7 +133,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
+    findOne = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
 		let client; 
 		const options = opts || {}
 
@@ -167,7 +167,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves many documents matching the filter
     */
-    list = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
+    find = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
 		let client;
 		const options = opts || {}
 
