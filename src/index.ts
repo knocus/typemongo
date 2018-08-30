@@ -20,19 +20,19 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult>;
-    get(filter: any): Promise<GetResult>;
+    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult<T>>;
+    get(filter: any): Promise<GetResult<T>>;
 }
 
-export interface GetResult {
+export interface GetResult<T> {
     count: number,
-    doc: any,
+    doc: T | null,
     error:any
 }
 
-export interface ListResult {
+export interface ListResult<T> {
     count: number,
-    docs: any[],
+    docs: T[],
     error:any
 }
 
@@ -52,6 +52,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
         const db = await this.mongo.db();
         return await db.collection(this.collectionName);
     }
+    
     /**
      * Adds a doc to the collection
     */
@@ -93,7 +94,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any, projections?: any): Promise<GetResult> => {
+    get = async (filter: any, projections?: any): Promise<GetResult<T>> => {
       try{
         const collection = await this.collection();
         const cursor: Cursor = await collection.findOne(filter)
@@ -117,7 +118,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves many documents matching the filter
     */
-    list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult> => {
+    list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult<T>> => {
         try{
           const collection = await this.collection();
           const cursor: Cursor = await collection.find(filter)
@@ -175,7 +176,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
       })
     };
 
-    sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult> => {
+    sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult<T>> => {
         try{
           const collection = await this.collection();
           const cursor: Cursor = await collection.find(filter)
