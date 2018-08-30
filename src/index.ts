@@ -12,8 +12,8 @@ import {
 
 
 export interface IWriter<T> {
-	insertOne(item: T): Promise<boolean>;
-	insertMany(items: T[]):Promise<boolean>;
+	insertOne(item: T, options?:Object): Promise<boolean>;
+	insertMany(items: T[], options?:Object):Promise<boolean>;
     update(filter:any, item: T): Promise<boolean>;
     delete(filter:any): Promise<boolean>;
     set(filter: any, setOp: any) : Promise<boolean>;
@@ -22,8 +22,8 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(filter: any, skip: number, limit: number, projections?: any): Promise<ListResult<T>>;
-    get(filter: any): Promise<GetResult<T>>;
+    list(filter: any, options?: Object): Promise<ListResult<T>>;
+    get(filter: any, options?: Object): Promise<GetResult<T>>;
 }
 
 export interface GetResult<T> {
@@ -58,44 +58,42 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		this.dbName = config.dbName;
     }
 
-    async insertOne(item: T): Promise<boolean> {
+    async insertOne(item: T, opts:Object): Promise<boolean> {
 		let client;
-		
+		const options = opts || {};
+
 		try {
 			client = await MongoClient.connect(this.url);
-			const db = client.db(this.dbName);
 
-			
 			const op: InsertOneWriteOpResult = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
-				.insertOne(item);
+				.insertOne(item, options);
 			
 			client.close();
-
-        	return !!op.result.ok;
+			return !!op.result.ok;
+			
 		} catch(err){
 			return false;
 		}
 	}
 
 
-	async insertMany(items: T[]): Promise<boolean> {
+	async insertMany(items: T[], opts?:Object): Promise<boolean> {
 		let client;
+		const options = opts || {};
 
 		try {
 			client = await MongoClient.connect(this.url);
-			const db = client.db(this.dbName);
-
 
 			const op: InsertWriteOpResult = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
-				.insertMany(items);
+				.insertMany(items, options);
 
 			client.close();
-
 			return !!op.result.ok;
+
 		} catch (err) {
 			return false;
 		}
@@ -107,9 +105,9 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     */
     async delete(filter: any): Promise<boolean> {
 		let client;
+
 		try {
 			client = await MongoClient.connect(this.url);
-			const db = client.db(this.dbName);
 			
 			const op: DeleteWriteOpResultObject = await client
 				.db(this.dbName)
@@ -117,19 +115,14 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.deleteOne(filter);
 			
 			client.close();
-
 			return !!op.result.ok;
+
 		} catch(err) {
 			return false;
 		}
     }
 
-    /**
-     * Deletes many docs mathing the filter
-    */
-    async deleteMany(ids: string[]): Promise<boolean> {
-        throw new Error("Not Implemented")
-    }
+    
 
     addToSet = async(filter:any, setOp:any):Promise<boolean> => {
       return await this.update(filter, {
@@ -139,18 +132,28 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any, projections?: any): Promise<GetResult<T>> => {
-      try{
-        const collection = await this.collection();
-        const cursor: Cursor = await collection.findOne(filter)
-          .project(projections);
+    get = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
+		let client; 
+		const options = opts || {}
+
+      	try{
+			client = await MongoClient.connect(this.url);
+
+			const cursor: Cursor = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.findOne(filter, options);
 
         const docArray = await cursor.toArray();
-        return {
-            count: await cursor.count(),
+        const result =  {
+            count:  await cursor.count(),
             doc: (docArray.length > 0) ? docArray.shift() : null,
             error:null
-        }
+		}
+		
+		client.close();
+		return result;
+
       } catch(err){
           return {
             count:0,
@@ -163,18 +166,28 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves many documents matching the filter
     */
-    list = async (filter: any, skip:number, limit:number, projections?:any): Promise<ListResult<T>> => {
-        try{
-          const collection = await this.collection();
-          const cursor: Cursor = await collection.find(filter)
-            .skip(skip)
-            .limit(limit)
-            .project(projections);
-            return {
-              count: await cursor.count(),
-              docs: await cursor.toArray(),
-              error: null
-            }
+    list = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
+		let client;
+		const options = opts || {}
+
+		try{
+		  const client = await MongoClient.connect(this.url);
+		  
+			const cursor: Cursor = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.find(filter, options);
+
+
+        	const result = {
+				count: await cursor.count(),
+              	docs: await cursor.toArray(),
+              	error: null
+			}
+			
+			client.close()
+			return result;
+
         } catch(err) {
             return {
               count: 0,
