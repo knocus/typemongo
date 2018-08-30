@@ -76,7 +76,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 
         	return !!op.result.ok;
 		} catch(err){
-			throw err
+			return false;
 		}
 	}
 
