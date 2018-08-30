@@ -36,23 +36,31 @@ export interface ListResult<T> {
     error:any
 }
 
-export interface MongoService {
-    db: Function
+export interface MongoConfig {
+    collectionName: string,
+	url:string,
+	dbName: string
 }
 
 export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
-    public collectionName:string;
-    public mongo:MongoService;
-    constructor(collectionName: string, mongo:MongoService) {
-        this.collectionName = collectionName;
-        this.mongo = mongo;
+	// collection for this repo
+	private collectionName: string;
+	// Mongo URL
+	private url: string;
+	// Name of the primary db
+	private dbName: string;
+
+    constructor(config: MongoConfig) {
+        this.collectionName = config.collectionName;
+		this.url = config.url;
+		this.dbName = config.dbName;
     }
 
     collection = async() => {
         const db = await this.mongo.db();
         return await db.collection(this.collectionName);
     }
-    
+
     /**
      * Adds a doc to the collection
     */
