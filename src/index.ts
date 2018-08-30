@@ -56,11 +56,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		this.dbName = config.dbName;
     }
 
-    collection = async() => {
-        const db = await this.mongo.db();
-        return await db.collection(this.collectionName);
-    }
-
+    
     /**
      * Adds a doc to the collection
     */
