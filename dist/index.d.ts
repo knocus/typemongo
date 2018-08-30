@@ -10,6 +10,7 @@ export interface IWriter<T> {
 export interface IReader<T> {
     find(filter: any, options?: Object): Promise<ListResult<T>>;
     findOne(filter: any, options?: Object): Promise<GetResult<T>>;
+    countDocuments(query: Object, options?: Object): Promise<number>;
 }
 export interface GetResult<T> {
     count: number;
@@ -54,4 +55,8 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     set: (filter: any, setOp: any) => Promise<boolean>;
     pull: (filter: any, pullOp: any) => Promise<boolean>;
     push: (filter: any, pushOp: any) => Promise<boolean>;
+    /**
+     * count the number of documents matching the query.
+    */
+    countDocuments: (query: Object, opts?: Object | undefined) => Promise<number>;
 }

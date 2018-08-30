@@ -207,13 +207,43 @@ var MongoRepository = /** @class */ (function () {
                 $push: pushOp
             });
         };
+        /**
+         * count the number of documents matching the query.
+        */
+        this.countDocuments = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, client_4, count, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = opts || {};
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                    case 2:
+                        client_4 = _a.sent();
+                        return [4 /*yield*/, client_4
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .countDocuments(query, options)];
+                    case 3:
+                        count = _a.sent();
+                        client_4.close();
+                        return [2 /*return*/, count];
+                    case 4:
+                        err_5 = _a.sent();
+                        return [2 /*return*/, 0];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        }); };
         this.collectionName = config.collectionName;
         this.url = config.url;
         this.dbName = config.dbName;
     }
     MongoRepository.prototype.insertOne = function (item, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_5;
+            var client, options, op, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -233,7 +263,7 @@ var MongoRepository = /** @class */ (function () {
                         client.close();
                         return [2 /*return*/, !!op.result.ok];
                     case 4:
-                        err_5 = _a.sent();
+                        err_6 = _a.sent();
                         return [2 /*return*/, false];
                     case 5: return [2 /*return*/];
                 }
@@ -242,7 +272,7 @@ var MongoRepository = /** @class */ (function () {
     };
     MongoRepository.prototype.insertMany = function (items, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_6;
+            var client, options, op, err_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -262,7 +292,7 @@ var MongoRepository = /** @class */ (function () {
                         client.close();
                         return [2 /*return*/, !!op.result.ok];
                     case 4:
-                        err_6 = _a.sent();
+                        err_7 = _a.sent();
                         return [2 /*return*/, false];
                     case 5: return [2 /*return*/];
                 }
@@ -274,7 +304,7 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.delete = function (filter) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, op, err_7;
+            var client, op, err_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -291,7 +321,7 @@ var MongoRepository = /** @class */ (function () {
                         client.close();
                         return [2 /*return*/, !!op.result.ok];
                     case 3:
-                        err_7 = _a.sent();
+                        err_8 = _a.sent();
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }
