@@ -6,12 +6,14 @@ import {
     Db,
     DeleteWriteOpResultObject,
     InsertOneWriteOpResult,
-    UpdateWriteOpResult
+    UpdateWriteOpResult,
+	InsertWriteOpResult
 } from 'mongodb';
 
 
 export interface IWriter<T> {
-    create(item: T): Promise<boolean>;
+	insertOne(item: T): Promise<boolean>;
+	insertMany(items: T[]):Promise<boolean>;
     update(filter:any, item: T): Promise<boolean>;
     delete(filter:any): Promise<boolean>;
     set(filter: any, setOp: any) : Promise<boolean>;
@@ -25,21 +27,21 @@ export interface IReader<T> {
 }
 
 export interface GetResult<T> {
-    count: number,
-    doc: T | null,
-    error:any
+    count: number;
+    doc: T | null;
+    error:any;
 }
 
 export interface ListResult<T> {
-    count: number,
-    docs: T[],
-    error:any
+    count: number;
+    docs: T[];
+    error:any;
 }
 
 export interface MongoConfig {
-    collectionName: string,
-	url:string,
-	dbName: string
+    collectionName: string;
+	url:string;
+	dbName: string;
 }
 
 export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
@@ -56,17 +58,14 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		this.dbName = config.dbName;
     }
 
-    
-    /**
-     * Adds a doc to the collection
-    */
-    async create(item: T): Promise<boolean> {
+    async insertOne(item: T): Promise<boolean> {
 		let client;
 		
 		try {
 			client = await MongoClient.connect(this.url);
 			const db = client.db(this.dbName);
 
+			
 			const op: InsertOneWriteOpResult = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
@@ -80,12 +79,27 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		}
 	}
 
-    /**
-     * Adds many docs to the collection
-    */
-    async createMany(items: T[]): Promise<boolean> {
-        throw new Error("Not Implemented")
-    }
+
+	async insertMany(items: T[]): Promise<boolean> {
+		let client;
+
+		try {
+			client = await MongoClient.connect(this.url);
+			const db = client.db(this.dbName);
+
+
+			const op: InsertWriteOpResult = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.insertMany(items);
+
+			client.close();
+
+			return !!op.result.ok;
+		} catch (err) {
+			return false;
+		}
+	}
 
 
     /**
