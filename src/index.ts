@@ -61,10 +61,24 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
      * Adds a doc to the collection
     */
     async create(item: T): Promise<boolean> {
-        const collection = await this.collection();
-        const op: InsertOneWriteOpResult = await collection.insertOne(item);
-        return !!op.result.ok;
-    }
+		let client = null;
+		
+		try {
+			client = await MongoClient.connect(this.url);
+			const db = client.db(this.dbName);
+
+			const op: InsertOneWriteOpResult = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.insertOne(item);
+			
+			client.close();
+
+        	return !!op.result.ok;
+		} catch(err){
+			throw err
+		}
+	}
 
     /**
      * Adds many docs to the collection
