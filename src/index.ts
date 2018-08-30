@@ -14,7 +14,7 @@ import {
 export interface IWriter<T> {
 	insertOne(item: T, options?:Object): Promise<boolean>;
 	insertMany(items: T[], options?:Object):Promise<boolean>;
-    update(filter:any, item: T): Promise<boolean>;
+    updateOne(filter:any, updates:Object, options?:Object): Promise<boolean>;
     delete(filter:any): Promise<boolean>;
     set(filter: any, setOp: any) : Promise<boolean>;
     pull(filter: any, pullOp: any) : Promise<boolean>;
@@ -72,7 +72,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			
 			client.close();
 			return !!op.result.ok;
-			
+
 		} catch(err){
 			return false;
 		}
@@ -125,10 +125,11 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     
 
     addToSet = async(filter:any, setOp:any):Promise<boolean> => {
-      return await this.update(filter, {
+      return await this.updateOne(filter, {
         $addToSet:setOp
       })
-    }
+	}
+	
     /**
      * Retrieves one document matching the filter
     */
@@ -201,57 +202,62 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Updates one doc matching the filter with the given update
     */
-    update = async (filter: any, update: any): Promise<boolean> => {
-        const collection = await this.collection();
-        const op: UpdateWriteOpResult = await collection.updateOne(filter, update);
-        return !!op.result.ok;
+    updateOne = async (filter: any, updates:Object, opts?:Object): Promise<boolean> => {
+		let client;
+		const options = opts || {}
+
+		try {
+			const client = await MongoClient.connect(this.url);
+
+			const op: UpdateWriteOpResult = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.updateOne(filter, updates,options);
+
+			client.close();
+			return !!op.result.ok;
+		} catch(err){
+			return false;
+		}
     }
 
-    upsert = async (filter: any, item: any): Promise<boolean> => {
-      const collection = await this.collection();
-      const op: UpdateWriteOpResult = await collection.updateOne(filter, item,
-        {
-          upsert:true,
-          safe:false
-        }
-      )
-      return !!op.result.ok;
-    }
+    upsert = async (filter: any, upserts: Object): Promise<boolean> => {
+		let client;
+
+		try {
+			const client = await MongoClient.connect(this.url);
+
+			const op: UpdateWriteOpResult = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.updateOne(filter, upserts,
+        			{
+          				upsert:true
+        			}
+				  )
+				  
+			client.close();
+      		return !!op.result.ok;
+    	} catch(err) {
+			return false;
+		}
+	}
 
     set = (filter: any, setOp: any) : Promise<boolean> => {
-      return this.update(filter, {
+      return this.updateOne(filter, {
         $set:setOp
       })
     };
     pull = (filter: any, pullOp: any) : Promise<boolean> => {
-      return this.update(filter, {
+      return this.updateOne(filter, {
         $pull:pullOp
       })
     };
     push = (filter: any, pushOp: any) : Promise<boolean> => {
-      return this.update(filter, {
+      return this.updateOne(filter, {
         $push:pushOp
       })
     };
 
-    sort = async (filter: any, skip:number, limit:number, sort:any): Promise<ListResult<T>> => {
-        try{
-          const collection = await this.collection();
-          const cursor: Cursor = await collection.find(filter)
-            .skip(skip)
-            .limit(limit)
-            .sort(limit);
-            return {
-              count: await cursor.count(),
-              docs:await cursor.toArray(),
-              error:null
-            }
-        } catch (err) {
-          return {
-            count:0,
-            docs:[],
-            error:err
-          }
-        }
-    }
+    
 }
