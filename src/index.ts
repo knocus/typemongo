@@ -24,6 +24,7 @@ export interface IWriter<T> {
 export interface IReader<T> {
     find(filter: any, options?: Object): Promise<ListResult<T>>;
 	findOne(filter: any, options?: Object): Promise<GetResult<T>>;
+	countDocuments(query:Object, options?:Object):Promise<number>;
 }
 
 export interface GetResult<T> {
@@ -259,5 +260,25 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
       })
     };
 
+	/** 
+	 * count the number of documents matching the query.
+	*/
+	countDocuments = async (query:Object, opts?:Object):Promise<number> => {
+		let client;
+		const options = opts || {}
+		try {
+			const client = await MongoClient.connect(this.url);
+
+			const count = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.countDocuments(query, options);
+			client.close();
+
+			return count;
+		} catch(err){
+			return 0;
+		}
+	}
     
 }
