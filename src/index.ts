@@ -22,8 +22,8 @@ export interface IWriter<T> {
 }
 
 export interface IReader<T> {
-    list(filter: any, options?: Object): Promise<ListResult<T>>;
-    get(filter: any, options?: Object): Promise<GetResult<T>>;
+    find(filter: any, options?: Object): Promise<ListResult<T>>;
+	findOne(filter: any, options?: Object): Promise<GetResult<T>>;
 }
 
 export interface GetResult<T> {
@@ -133,7 +133,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves one document matching the filter
     */
-    get = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
+    findOne = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
 		let client; 
 		const options = opts || {}
 
@@ -167,7 +167,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     /**
      * Retrieves many documents matching the filter
     */
-    list = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
+    find = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
 		let client;
 		const options = opts || {}
 
