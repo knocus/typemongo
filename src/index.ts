@@ -61,7 +61,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
      * Adds a doc to the collection
     */
     async create(item: T): Promise<boolean> {
-		let client = null;
+		let client;
 		
 		try {
 			client = await MongoClient.connect(this.url);
@@ -92,9 +92,22 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
      * Deletes one doc matching the filter
     */
     async delete(filter: any): Promise<boolean> {
-        const collection = await this.collection();
-        const op: DeleteWriteOpResultObject = await collection.deleteOne(filter)
-        return !!op.result.ok;
+		let client;
+		try {
+			client = await MongoClient.connect(this.url);
+			const db = client.db(this.dbName);
+			
+			const op: DeleteWriteOpResultObject = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.deleteOne(filter);
+			
+			client.close();
+
+			return !!op.result.ok;
+		} catch(err) {
+			return false;
+		}
     }
 
     /**
