@@ -1,46 +1,46 @@
 import { ObjectId } from 'bson';
 import {
-    MongoClient,
-    Collection,
-    Cursor,
-    Db,
-    DeleteWriteOpResultObject,
-    InsertOneWriteOpResult,
-    UpdateWriteOpResult,
+  MongoClient,
+  Collection,
+  Cursor,
+  Db,
+  DeleteWriteOpResultObject,
+  InsertOneWriteOpResult,
+  UpdateWriteOpResult,
 	InsertWriteOpResult
 } from 'mongodb';
 
 
 export interface IWriter<T> {
-		insertOne(item: T, options?:Object): Promise<boolean>;
-		insertMany(items: T[], options?:Object):Promise<boolean>;
-    updateOne(filter:any, updates:Object, options?:Object): Promise<boolean>;
-    delete(filter:any): Promise<boolean>;
-    set(filter: any, setOp: any) : Promise<boolean>;
-    pull(filter: any, pullOp: any) : Promise<boolean>;
-    push(filter: any, pushOp: any) : Promise<boolean>;
+	insertOne(item: T, options?:Object): Promise<boolean>;
+	insertMany(items: T[], options?:Object):Promise<boolean>;
+  updateOne(filter:any, updates:Object, options?:Object): Promise<boolean>;
+  delete(filter:any): Promise<boolean>;
+  set(filter: any, setOp: any) : Promise<boolean>;
+  pull(filter: any, pullOp: any) : Promise<boolean>;
+  push(filter: any, pushOp: any) : Promise<boolean>;
 }
 
 export interface IReader<T> {
-    find(filter: any, options?: Object): Promise<ListResult<T>>;
-		findOne(filter: any, options?: Object): Promise<GetResult<T>>;
-		countDocuments(query:Object, options?:Object):Promise<number>;
+	find(filter: any, options?: Object): Promise<ListResult<T>>;
+	findOne(filter: any, options?: Object): Promise<GetResult<T>>;
+	countDocuments(query:Object, options?:Object):Promise<number>;
 }
 
 export interface GetResult<T> {
-    count: number;
-    doc: T | null;
-    error:any;
+  count: number;
+  doc: T | null;
+  error:any;
 }
 
 export interface ListResult<T> {
-    count: number;
-    docs: T[];
-    error:any;
+  count: number;
+  docs: T[];
+  error:any;
 }
 
 export interface MongoConfig {
-    collectionName: string;
+  collectionName: string;
 	url:string;
 	dbName: string;
 }
@@ -53,13 +53,13 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	// Name of the primary db
 	private dbName: string;
 
-    constructor(config: MongoConfig) {
-        this.collectionName = config.collectionName;
+  constructor(config: MongoConfig) {
+    this.collectionName = config.collectionName;
 		this.url = config.url;
 		this.dbName = config.dbName;
-    }
+  }
 
-    async insertOne(item: T, opts?:Object): Promise<boolean> {
+  async insertOne(item: T, opts?:Object): Promise<boolean> {
 		let client;
 		const options = opts || {};
 
@@ -101,10 +101,10 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	}
 
 
-    /**
-     * Deletes one doc matching the filter
-    */
-    async delete(filter: any): Promise<boolean> {
+  /**
+  * Deletes one doc matching the filter
+  */
+  async delete(filter: any): Promise<boolean> {
 		let client;
 
 		try {
@@ -131,14 +131,14 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
       })
 	}
 	
-    /**
-     * Retrieves one document matching the filter
-    */
-    findOne = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
+  /**
+  * Retrieves one document matching the filter
+  */
+  findOne = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
 		let client; 
 		const options = opts || {}
 
-      	try{
+    try{
 			client = await MongoClient.connect(this.url);
 
 			const cursor: Cursor = await client
@@ -151,24 +151,25 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
             count:  await cursor.count(),
             doc: (docArray.length > 0) ? docArray.shift() : null,
             error:null
-		}
+				}
 		
-		client.close();
-		return result;
+			client.close();
+			return result;
 
-      } catch(err){
-          return {
-            count:0,
-            doc: null,
-            error:err
-          }
+		} 
+		catch(err){	
+			return {
+          count:0,
+          doc: null,
+          error:err
       }
     }
+  }
 
-    /**
-     * Retrieves many documents matching the filter
-    */
-    find = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
+  /**
+  * Retrieves many documents matching the filter
+  */
+  find = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
 		let client;
 		const options = opts || {}
 
@@ -200,10 +201,10 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
     }
 
 
-    /**
-     * Updates one doc matching the filter with the given update
-    */
-    updateOne = async (filter: any, updates:Object, opts?:Object): Promise<boolean> => {
+  /**
+  * Updates one doc matching the filter with the given update
+  */
+  updateOne = async (filter: any, updates:Object, opts?:Object): Promise<boolean> => {
 		let client;
 		const options = opts || {}
 
@@ -222,7 +223,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		}
     }
 
-    upsert = async (filter: any, upserts: Object): Promise<boolean> => {
+  upsert = async (filter: any, upserts: Object): Promise<boolean> => {
 		let client;
 
 		try {
@@ -244,21 +245,23 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		}
 	}
 
-    set = (filter: any, setOp: any) : Promise<boolean> => {
+  set = (filter: any, setOp: any) : Promise<boolean> => {
       return this.updateOne(filter, {
         $set:setOp
       })
-    };
-    pull = (filter: any, pullOp: any) : Promise<boolean> => {
+  };
+	
+	pull = (filter: any, pullOp: any) : Promise<boolean> => {
       return this.updateOne(filter, {
         $pull:pullOp
       })
-    };
-    push = (filter: any, pushOp: any) : Promise<boolean> => {
+	};
+		
+  push = (filter: any, pushOp: any) : Promise<boolean> => {
       return this.updateOne(filter, {
         $push:pushOp
       })
-    };
+  };
 
 	/** 
 	 * count the number of documents matching the query.

@@ -50,7 +50,7 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-         * Retrieves one document matching the filter
+        * Retrieves one document matching the filter
         */
         this.findOne = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, cursor, docArray, result, _a, err_1;
@@ -94,7 +94,7 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-         * Retrieves many documents matching the filter
+        * Retrieves many documents matching the filter
         */
         this.find = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, client_1, cursor, result, _a, err_2;
@@ -137,7 +137,7 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-         * Updates one doc matching the filter with the given update
+        * Updates one doc matching the filter with the given update
         */
         this.updateOne = function (filter, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, client_2, op, err_3;
@@ -300,7 +300,7 @@ var MongoRepository = /** @class */ (function () {
         });
     };
     /**
-     * Deletes one doc matching the filter
+    * Deletes one doc matching the filter
     */
     MongoRepository.prototype.delete = function (filter) {
         return __awaiter(this, void 0, void 0, function () {

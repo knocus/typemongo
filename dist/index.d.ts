@@ -35,20 +35,20 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     insertOne(item: T, opts?: Object): Promise<boolean>;
     insertMany(items: T[], opts?: Object): Promise<boolean>;
     /**
-     * Deletes one doc matching the filter
+    * Deletes one doc matching the filter
     */
     delete(filter: any): Promise<boolean>;
     addToSet: (filter: any, setOp: any) => Promise<boolean>;
     /**
-     * Retrieves one document matching the filter
+    * Retrieves one document matching the filter
     */
     findOne: (filter: any, opts?: Object | undefined) => Promise<GetResult<T>>;
     /**
-     * Retrieves many documents matching the filter
+    * Retrieves many documents matching the filter
     */
     find: (filter: any, opts?: Object | undefined) => Promise<ListResult<T>>;
     /**
-     * Updates one doc matching the filter with the given update
+    * Updates one doc matching the filter with the given update
     */
     updateOne: (filter: any, updates: Object, opts?: Object | undefined) => Promise<boolean>;
     upsert: (filter: any, upserts: Object) => Promise<boolean>;
