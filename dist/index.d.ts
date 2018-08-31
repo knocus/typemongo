@@ -32,7 +32,7 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     private url;
     private dbName;
     constructor(config: MongoConfig);
-    insertOne(item: T, opts: Object): Promise<boolean>;
+    insertOne(item: T, opts?: Object): Promise<boolean>;
     insertMany(items: T[], opts?: Object): Promise<boolean>;
     /**
      * Deletes one doc matching the filter

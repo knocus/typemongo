@@ -12,8 +12,8 @@ import {
 
 
 export interface IWriter<T> {
-	insertOne(item: T, options?:Object): Promise<boolean>;
-	insertMany(items: T[], options?:Object):Promise<boolean>;
+		insertOne(item: T, options?:Object): Promise<boolean>;
+		insertMany(items: T[], options?:Object):Promise<boolean>;
     updateOne(filter:any, updates:Object, options?:Object): Promise<boolean>;
     delete(filter:any): Promise<boolean>;
     set(filter: any, setOp: any) : Promise<boolean>;
@@ -23,8 +23,8 @@ export interface IWriter<T> {
 
 export interface IReader<T> {
     find(filter: any, options?: Object): Promise<ListResult<T>>;
-	findOne(filter: any, options?: Object): Promise<GetResult<T>>;
-	countDocuments(query:Object, options?:Object):Promise<number>;
+		findOne(filter: any, options?: Object): Promise<GetResult<T>>;
+		countDocuments(query:Object, options?:Object):Promise<number>;
 }
 
 export interface GetResult<T> {
@@ -59,7 +59,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		this.dbName = config.dbName;
     }
 
-    async insertOne(item: T, opts:Object): Promise<boolean> {
+    async insertOne(item: T, opts?:Object): Promise<boolean> {
 		let client;
 		const options = opts || {};
 
