@@ -155,26 +155,44 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 
 
   /**
-  * Deletes one doc matching the filter
+	* Operation for mongoDB deleteOne
+	* Deletes one doc matching the filter
+	* @param query a query to match the document to delete.
+	* @param opts  options for deleteOne. refer to mongodb docs.
+	* 
+	* @returns a typemongo response
+	* If successful returns {
+  *   ok: true   
+	*	}
+	* 
+	* If not successful returns {
+  *    ok: false,
+  *    err: Error("some error here")
+	* }
   */
-  async delete(filter: any): Promise<boolean> {
+  async deleteOne(query: any, opts?: Object): Promise<TypeMongoResponse> {
 		let client;
-
+		const options = opts || {}
 		try {
 			client = await MongoClient.connect(this.url);
 			
 			const op: DeleteWriteOpResultObject = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
-				.deleteOne(filter);
+				.deleteOne(query, opts);
 			
-			client.close();
-			return !!op.result.ok;
+			await client.close();
+			return {
+				ok: !!op.result.ok
+			}
 
 		} catch(err) {
-			return false;
+			return {
+				ok: false,
+				err
+			}
 		}
-    }
+  }
 
     
 
