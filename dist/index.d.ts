@@ -6,15 +6,15 @@ export interface TypeMongoResponse {
 export interface IWriter<T> {
     insertOne(item: T, options?: Object): Promise<TypeMongoResponse>;
     insertMany(items: T[], options?: Object): Promise<TypeMongoResponse>;
-    updateOne(filter: any, updates: Object, options?: Object): Promise<boolean>;
-    deleteOne(filter: any, options?: Object): Promise<TypeMongoResponse>;
-    set(filter: any, setOp: any): Promise<boolean>;
-    pull(filter: any, pullOp: any): Promise<boolean>;
-    push(filter: any, pushOp: any): Promise<boolean>;
+    updateOne(query: any, updates: Object, options?: Object): Promise<TypeMongoResponse>;
+    deleteOne(query: any, options?: Object): Promise<TypeMongoResponse>;
+    set(query: any, setOp: any): Promise<TypeMongoResponse>;
+    pull(query: any, pullOp: any): Promise<TypeMongoResponse>;
+    push(query: any, pushOp: any): Promise<TypeMongoResponse>;
 }
 export interface IReader<T> {
-    find(filter: any, options?: Object): Promise<TypeMongoResponse>;
-    findOne(filter: any, options?: Object): Promise<TypeMongoResponse>;
+    find(query: any, options?: Object): Promise<TypeMongoResponse>;
+    findOne(query: any, options?: Object): Promise<TypeMongoResponse>;
     countDocuments(query: Object, options?: Object): Promise<number>;
 }
 export interface MongoConfig {
@@ -72,7 +72,7 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     insertMany(items: T[], opts?: Object): Promise<TypeMongoResponse>;
     /**
        * Operation for mongoDB deleteOne
-       * Deletes one doc matching the filter
+       * Deletes one doc matching the query
        *
        * @param query a query to match the document to delete.
        * @param opts  options for deleteOne. refer to mongodb docs.
@@ -91,7 +91,7 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     /**
        * [CAUTION] Under contruction
        */
-    addToSet: (filter: any, setOp: any) => Promise<boolean>;
+    addToSet: (query: any, setOp: any) => Promise<TypeMongoResponse>;
     /**
        * Operation for mongodb findOne.
      * Retrieves one document matching the query.
@@ -101,10 +101,10 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
        *
        * @returns
     */
-    findOne: (filter: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
+    findOne: (query: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
        * Operation find for mongoDB.
-     * Retrieves many documents matching the filter
+     * Retrieves many documents matching the query
        * If successful, returns {
        *   ok: true,
        *   data:{
@@ -120,13 +120,18 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     */
     find: (query: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
-    * Updates one doc matching the filter with the given update
-    */
-    updateOne: (filter: any, updates: Object, opts?: Object | undefined) => Promise<boolean>;
-    upsert: (filter: any, upserts: Object) => Promise<boolean>;
-    set: (filter: any, setOp: any) => Promise<boolean>;
-    pull: (filter: any, pullOp: any) => Promise<boolean>;
-    push: (filter: any, pushOp: any) => Promise<boolean>;
+       * Operation updateOne
+       * Updates one document matching the query
+       *
+       * @param query a query to match documents to update
+       * @param updates objects corresponding to the updates to make
+       * @param opts options supported by mongodb. refer to mongodb docs.
+       */
+    updateOne: (query: any, updates: Object, opts?: Object | undefined) => Promise<TypeMongoResponse>;
+    upsert: (query: any, upserts: Object) => Promise<boolean>;
+    set: (query: any, setOp: any) => Promise<TypeMongoResponse>;
+    pull: (query: any, pullOp: any) => Promise<TypeMongoResponse>;
+    push: (query: any, pushOp: any) => Promise<TypeMongoResponse>;
     /**
      * count the number of documents matching the query.
     */
