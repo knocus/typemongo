@@ -20,29 +20,19 @@ export interface IWriter<T> {
 	insertOne(item: T, options?:Object): Promise<TypeMongoResponse>;
 	insertMany(items: T[], options?:Object):Promise<TypeMongoResponse>;
   updateOne(filter:any, updates:Object, options?:Object): Promise<boolean>;
-  delete(filter:any): Promise<boolean>;
+  deleteOne(filter:any, options?: Object): Promise<TypeMongoResponse>;
   set(filter: any, setOp: any) : Promise<boolean>;
   pull(filter: any, pullOp: any) : Promise<boolean>;
   push(filter: any, pushOp: any) : Promise<boolean>;
 }
 
 export interface IReader<T> {
-	find(filter: any, options?: Object): Promise<ListResult<T>>;
-	findOne(filter: any, options?: Object): Promise<GetResult<T>>;
+	find(filter: any, options?: Object): Promise<TypeMongoResponse>;
+	findOne(filter: any, options?: Object): Promise<TypeMongoResponse>;
 	countDocuments(query:Object, options?:Object):Promise<number>;
 }
 
-export interface GetResult<T> {
-  count: number;
-  doc: T | null;
-  error:any;
-}
 
-export interface ListResult<T> {
-  count: number;
-  docs: T[];
-  error:any;
-}
 
 export interface MongoConfig {
   collectionName: string;
@@ -65,7 +55,8 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
   }
 
 	/**
-	 * Operation for mongoDB insertOne. Inserts one document into collection 
+	 * Operation for mongoDB insertOne. 
+	 * Inserts one document into collection 
 	 * 
 	 * @param item a model object to be saved as a document
 	 * @param opts mongodb insertOne options (all supported) Refer to mongodb docs.
@@ -155,20 +146,21 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 
 
   /**
-	* Operation for mongoDB deleteOne
-	* Deletes one doc matching the filter
-	* @param query a query to match the document to delete.
-	* @param opts  options for deleteOne. refer to mongodb docs.
-	* 
-	* @returns a typemongo response
-	* If successful returns {
-  *   ok: true   
-	*	}
-	* 
-	* If not successful returns {
-  *    ok: false,
-  *    err: Error("some error here")
-	* }
+	 * Operation for mongoDB deleteOne
+	 * Deletes one doc matching the filter
+	 *
+	 * @param query a query to match the document to delete.
+	 * @param opts  options for deleteOne. refer to mongodb docs.
+	 * 
+	 * @returns a typemongo response
+	 * If successful returns {
+   *   ok: true   
+	 *	}
+	 * 
+	 * If not successful returns {
+   *    ok: false,
+   *    err: Error("some error here")
+	 * }
   */
   async deleteOne(query: any, opts?: Object): Promise<TypeMongoResponse> {
 		let client;
@@ -195,17 +187,25 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
   }
 
     
-
-    addToSet = async(filter:any, setOp:any):Promise<boolean> => {
+  /**
+	 * [CAUTION] Under contruction
+	 */
+  addToSet = async(filter:any, setOp:any):Promise<boolean> => {
       return await this.updateOne(filter, {
         $addToSet:setOp
       })
 	}
 	
   /**
-  * Retrieves one document matching the filter
+	 * Operation for mongodb findOne.
+   * Retrieves one document matching the query.
+	 * 
+	 * @param query a query to match the document.
+	 * @param opts  options to be passed. refer to mongodb docs.
+	 * 
+	 * @returns
   */
-  findOne = async (filter: any, opts?:Object): Promise<GetResult<T>> => {
+  findOne = async (filter: any, opts?:Object): Promise<TypeMongoResponse> => {
 		let client; 
 		const options = opts || {}
 
@@ -218,21 +218,22 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.findOne(filter, options);
 
         const docArray = await cursor.toArray();
-        const result =  {
+        const data =  {
             count:  await cursor.count(),
             doc: (docArray.length > 0) ? docArray.shift() : null,
             error:null
 				}
 		
-			client.close();
-			return result;
-
+			await client.close();
+			return {
+				ok:true,
+				data	
+			}
 		} 
 		catch(err){	
 			return {
-          count:0,
-          doc: null,
-          error:err
+					ok: false,
+					err
       }
     }
   }
@@ -240,7 +241,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
   /**
   * Retrieves many documents matching the filter
   */
-  find = async (filter: any, opts?: Object): Promise<ListResult<T>> => {
+  find = async (filter: any, opts?: Object): Promise<TypeMongoResponse> => {
 		let client;
 		const options = opts || {}
 
@@ -253,16 +254,18 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.find(filter, options);
 
 
-        	const result = {
+      const data = {
 				count: await cursor.count(),
-              	docs: await cursor.toArray(),
-              	error: null
+        docs: await cursor.toArray(),
+        error: null
 			}
 			
-			client.close()
-			return result;
-
-        } catch(err) {
+			await client.close()
+			return {
+				
+				result;
+			}
+    } catch(err) {
             return {
               count: 0,
               docs: [],
