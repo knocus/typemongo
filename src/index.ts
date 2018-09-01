@@ -239,9 +239,22 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
   }
 
   /**
-  * Retrieves many documents matching the filter
+	 * Operation find for mongoDB. 
+   * Retrieves many documents matching the filter
+	 * If successful, returns {
+	 *   ok: true,
+	 *   data:{
+	 *      count: <somenumber>
+	 *      docs: [... a list of docs...]
+	 *   } 
+	 * }
+	 * 
+	 * If not successful, returns {
+	 *    ok: false,
+	 *    err: Error("some error here")
+	 * }
   */
-  find = async (filter: any, opts?: Object): Promise<TypeMongoResponse> => {
+  find = async (query: any, opts?: Object): Promise<TypeMongoResponse> => {
 		let client;
 		const options = opts || {}
 
@@ -251,7 +264,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			const cursor: Cursor = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
-				.find(filter, options);
+				.find(query, options);
 
 
       const data = {
@@ -262,16 +275,15 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			
 			await client.close()
 			return {
-				
-				result;
+				ok: true,
+				data
 			}
     } catch(err) {
-            return {
-              count: 0,
-              docs: [],
-              error:err
-            }
-        }
+				return {
+					ok: false,
+					err
+				}
+      }
     }
 
 

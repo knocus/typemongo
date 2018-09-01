@@ -7,25 +7,15 @@ export interface IWriter<T> {
     insertOne(item: T, options?: Object): Promise<TypeMongoResponse>;
     insertMany(items: T[], options?: Object): Promise<TypeMongoResponse>;
     updateOne(filter: any, updates: Object, options?: Object): Promise<boolean>;
-    delete(filter: any): Promise<boolean>;
+    deleteOne(filter: any, options?: Object): Promise<TypeMongoResponse>;
     set(filter: any, setOp: any): Promise<boolean>;
     pull(filter: any, pullOp: any): Promise<boolean>;
     push(filter: any, pushOp: any): Promise<boolean>;
 }
 export interface IReader<T> {
-    find(filter: any, options?: Object): Promise<ListResult<T>>;
-    findOne(filter: any, options?: Object): Promise<GetResult<T>>;
+    find(filter: any, options?: Object): Promise<TypeMongoResponse>;
+    findOne(filter: any, options?: Object): Promise<TypeMongoResponse>;
     countDocuments(query: Object, options?: Object): Promise<number>;
-}
-export interface GetResult<T> {
-    count: number;
-    doc: T | null;
-    error: any;
-}
-export interface ListResult<T> {
-    count: number;
-    docs: T[];
-    error: any;
 }
 export interface MongoConfig {
     collectionName: string;
@@ -38,7 +28,8 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     private dbName;
     constructor(config: MongoConfig);
     /**
-     * Operation for mongoDB insertOne. Inserts one document into collection
+     * Operation for mongoDB insertOne.
+     * Inserts one document into collection
      *
      * @param item a model object to be saved as a document
      * @param opts mongodb insertOne options (all supported) Refer to mongodb docs.
@@ -80,18 +71,54 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
      */
     insertMany(items: T[], opts?: Object): Promise<TypeMongoResponse>;
     /**
-    * Deletes one doc matching the filter
+       * Operation for mongoDB deleteOne
+       * Deletes one doc matching the filter
+       *
+       * @param query a query to match the document to delete.
+       * @param opts  options for deleteOne. refer to mongodb docs.
+       *
+       * @returns a typemongo response
+       * If successful returns {
+     *   ok: true
+       *	}
+       *
+       * If not successful returns {
+     *    ok: false,
+     *    err: Error("some error here")
+       * }
     */
-    delete(filter: any): Promise<boolean>;
+    deleteOne(query: any, opts?: Object): Promise<TypeMongoResponse>;
+    /**
+       * [CAUTION] Under contruction
+       */
     addToSet: (filter: any, setOp: any) => Promise<boolean>;
     /**
-    * Retrieves one document matching the filter
+       * Operation for mongodb findOne.
+     * Retrieves one document matching the query.
+       *
+       * @param query a query to match the document.
+       * @param opts  options to be passed. refer to mongodb docs.
+       *
+       * @returns
     */
-    findOne: (filter: any, opts?: Object | undefined) => Promise<GetResult<T>>;
+    findOne: (filter: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
-    * Retrieves many documents matching the filter
+       * Operation find for mongoDB.
+     * Retrieves many documents matching the filter
+       * If successful, returns {
+       *   ok: true,
+       *   data:{
+       *      count: <somenumber>
+       *      docs: [... a list of docs...]
+       *   }
+       * }
+       *
+       * If not successful, returns {
+       *    ok: false,
+       *    err: Error("some error here")
+       * }
     */
-    find: (filter: any, opts?: Object | undefined) => Promise<ListResult<T>>;
+    find: (query: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
     * Updates one doc matching the filter with the given update
     */
