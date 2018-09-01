@@ -5,7 +5,7 @@ export interface TypeMongoResponse {
 }
 export interface IWriter<T> {
     insertOne(item: T, options?: Object): Promise<TypeMongoResponse>;
-    insertMany(items: T[], options?: Object): Promise<boolean>;
+    insertMany(items: T[], options?: Object): Promise<TypeMongoResponse>;
     updateOne(filter: any, updates: Object, options?: Object): Promise<boolean>;
     delete(filter: any): Promise<boolean>;
     set(filter: any, setOp: any): Promise<boolean>;
@@ -45,19 +45,40 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
      *
      * @return a typemongo response.
      *
-     * If the operation was succesfull,
+     * If the operation was successful,
      * returns {
      *   ok: true
      * }
      *
-     * If the operation was not successfull,
+     * If the operation was not successful,
      * returns {
      *   ok: false
      *   err: Error("some error here")
      * }
      */
     insertOne(item: T, opts?: Object): Promise<TypeMongoResponse>;
-    insertMany(items: T[], opts?: Object): Promise<boolean>;
+    /**
+     * Operation for mongodb insertMany.
+     * Inserts multiple documents at once.
+     *
+     * @param items a list of model objects to be saved as documents
+     * @param opts mongodb insertMany options (all are supported). Refer to mongodb docs
+     *
+     * @return a typemongo response
+     *
+     * If successful
+     * returns {
+     * 		ok: true
+     * }
+     *
+     *
+     * If not successful
+     * returns {
+     *    ok:false,
+     * 		err: Error("some error here")
+     * }
+     */
+    insertMany(items: T[], opts?: Object): Promise<TypeMongoResponse>;
     /**
     * Deletes one doc matching the filter
     */

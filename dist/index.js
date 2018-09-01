@@ -249,12 +249,12 @@ var MongoRepository = /** @class */ (function () {
      *
      * @return a typemongo response.
      *
-     * If the operation was succesfull,
+     * If the operation was successful,
      * returns {
      *   ok: true
      * }
      *
-     * If the operation was not successfull,
+     * If the operation was not successful,
      * returns {
      *   ok: false
      *   err: Error("some error here")
@@ -269,7 +269,7 @@ var MongoRepository = /** @class */ (function () {
                         options = opts || {};
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client = _a.sent();
@@ -279,21 +279,44 @@ var MongoRepository = /** @class */ (function () {
                                 .insertOne(item, options)];
                     case 3:
                         op = _a.sent();
-                        client.close();
+                        return [4 /*yield*/, client.close()];
+                    case 4:
+                        _a.sent();
                         return [2 /*return*/, {
                                 ok: !!op.result.ok,
                             }];
-                    case 4:
+                    case 5:
                         err_6 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
                                 err: err_6
                             }];
-                    case 5: return [2 /*return*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Operation for mongodb insertMany.
+     * Inserts multiple documents at once.
+     *
+     * @param items a list of model objects to be saved as documents
+     * @param opts mongodb insertMany options (all are supported). Refer to mongodb docs
+     *
+     * @return a typemongo response
+     *
+     * If successful
+     * returns {
+     * 		ok: true
+     * }
+     *
+     *
+     * If not successful
+     * returns {
+     *    ok:false,
+     * 		err: Error("some error here")
+     * }
+     */
     MongoRepository.prototype.insertMany = function (items, opts) {
         return __awaiter(this, void 0, void 0, function () {
             var client, options, op, err_7;
@@ -303,7 +326,7 @@ var MongoRepository = /** @class */ (function () {
                         options = opts || {};
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client = _a.sent();
@@ -313,12 +336,19 @@ var MongoRepository = /** @class */ (function () {
                                 .insertMany(items, options)];
                     case 3:
                         op = _a.sent();
-                        client.close();
-                        return [2 /*return*/, !!op.result.ok];
+                        return [4 /*yield*/, client.close()];
                     case 4:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok
+                            }];
+                    case 5:
                         err_7 = _a.sent();
-                        return [2 /*return*/, false];
-                    case 5: return [2 /*return*/];
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_7
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         });

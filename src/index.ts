@@ -18,7 +18,7 @@ export interface TypeMongoResponse {
 
 export interface IWriter<T> {
 	insertOne(item: T, options?:Object): Promise<TypeMongoResponse>;
-	insertMany(items: T[], options?:Object):Promise<boolean>;
+	insertMany(items: T[], options?:Object):Promise<TypeMongoResponse>;
   updateOne(filter:any, updates:Object, options?:Object): Promise<boolean>;
   delete(filter:any): Promise<boolean>;
   set(filter: any, setOp: any) : Promise<boolean>;
@@ -72,12 +72,12 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	 * 
 	 * @return a typemongo response.
 	 * 
-	 * If the operation was succesfull, 
+	 * If the operation was successful, 
 	 * returns {
 	 *   ok: true
 	 * }
 	 * 
-	 * If the operation was not successfull,
+	 * If the operation was not successful,
 	 * returns {
 	 *   ok: false
 	 *   err: Error("some error here")
@@ -95,7 +95,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.collection(this.collectionName)
 				.insertOne(item, options);
 			
-			client.close();
+			await client.close();
 			return {
 				ok: !!op.result.ok,
 			}
@@ -108,8 +108,28 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		}
 	}
 
-
-	async insertMany(items: T[], opts?:Object): Promise<boolean> {
+	/**
+	 * Operation for mongodb insertMany.
+	 * Inserts multiple documents at once.
+	 * 
+	 * @param items a list of model objects to be saved as documents
+	 * @param opts mongodb insertMany options (all are supported). Refer to mongodb docs 
+	 * 
+	 * @return a typemongo response
+	 * 
+	 * If successful
+	 * returns {
+	 * 		ok: true
+	 * }
+	 * 
+	 * 
+	 * If not successful
+	 * returns {
+	 *    ok:false,
+	 * 		err: Error("some error here")
+	 * }
+	 */
+	async insertMany(items: T[], opts?:Object): Promise<TypeMongoResponse> {
 		let client;
 		const options = opts || {};
 
@@ -121,11 +141,15 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.collection(this.collectionName)
 				.insertMany(items, options);
 
-			client.close();
-			return !!op.result.ok;
-
+			await client.close();
+			return {
+				ok: !!op.result.ok
+			}
 		} catch (err) {
-			return false;
+			return {
+				ok: false,
+				err
+			}
 		}
 	}
 
