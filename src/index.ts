@@ -1,12 +1,12 @@
 import { ObjectId } from 'bson';
 import {
-  MongoClient,
-  Collection,
-  Cursor,
-  Db,
-  DeleteWriteOpResultObject,
-  InsertOneWriteOpResult,
-  UpdateWriteOpResult,
+  	MongoClient,
+  	Collection,
+  	Cursor,
+  	Db,
+  	DeleteWriteOpResultObject,
+  	InsertOneWriteOpResult,
+  	UpdateWriteOpResult,
 	InsertWriteOpResult
 } from 'mongodb';
 
@@ -19,11 +19,11 @@ export interface TypeMongoResponse {
 export interface IWriter<T> {
 	insertOne(item: T, options?:Object): Promise<TypeMongoResponse>;
 	insertMany(items: T[], options?:Object):Promise<TypeMongoResponse>;
-  updateOne(query:any, updates:Object, options?:Object): Promise<TypeMongoResponse>;
-  deleteOne(query:any, options?: Object): Promise<TypeMongoResponse>;
-  set(query: any, setOp: any) : Promise<TypeMongoResponse>;
-  pull(query: any, pullOp: any) : Promise<TypeMongoResponse>;
-  push(query: any, pushOp: any) : Promise<TypeMongoResponse>;
+  	updateOne(query:any, updates:Object, options?:Object): Promise<TypeMongoResponse>;
+  	deleteOne(query:any, options?: Object): Promise<TypeMongoResponse>;
+  	set(query: any, setOp: any) : Promise<TypeMongoResponse>;
+  	pull(query: any, pullOp: any) : Promise<TypeMongoResponse>;
+  	push(query: any, pushOp: any) : Promise<TypeMongoResponse>;
 }
 
 export interface IReader<T> {
@@ -35,7 +35,7 @@ export interface IReader<T> {
 
 
 export interface MongoConfig {
-  collectionName: string;
+  	collectionName: string;
 	url:string;
 	dbName: string;
 }
@@ -48,11 +48,11 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	// Name of the primary db
 	private dbName: string;
 
-  constructor(config: MongoConfig) {
-    this.collectionName = config.collectionName;
+  	constructor(config: MongoConfig) {
+    	this.collectionName = config.collectionName;
 		this.url = config.url;
 		this.dbName = config.dbName;
-  }
+  	}
 
 	/**
 	 * Operation for mongoDB insertOne. 
@@ -74,7 +74,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	 *   err: Error("some error here")
 	 * }
 	 */
-  async insertOne(item: T, opts?:Object): Promise<TypeMongoResponse> {
+  	async insertOne(item: T, opts?:Object): Promise<TypeMongoResponse> {
 		let client;
 		const options = opts || {};
 
@@ -187,29 +187,29 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
   }
 
     
-  /**
+  	/**
 	 * [CAUTION] Under contruction
 	 */
-  addToSet = async(query:any, setOp:any):Promise<TypeMongoResponse> => {
+  	addToSet = async(query:any, setOp:any):Promise<TypeMongoResponse> => {
       return await this.updateOne(query, {
         $addToSet:setOp
       })
 	}
 	
-  /**
+  	/**
 	 * Operation for mongodb findOne.
-   * Retrieves one document matching the query.
+   	 * Retrieves one document matching the query.
 	 * 
 	 * @param query a query to match the document.
 	 * @param opts  options to be passed. refer to mongodb docs.
 	 * 
 	 * @returns
-  */
-  findOne = async (query: any, opts?:Object): Promise<TypeMongoResponse> => {
+  	*/
+  	findOne = async (query: any, opts?:Object): Promise<TypeMongoResponse> => {
 		let client; 
 		const options = opts || {}
 
-    try{
+    	try{
 			client = await MongoClient.connect(this.url);
 
 			const cursor: Cursor = await client
@@ -217,11 +217,11 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.collection(this.collectionName)
 				.findOne(query, options);
 
-        const docArray = await cursor.toArray();
-        const data =  {
-            count:  await cursor.count(),
-            doc: (docArray.length > 0) ? docArray.shift() : null,
-            error:null
+        	const docArray = await cursor.toArray();
+        	const data =  {
+            	count:  await cursor.count(),
+            	doc: (docArray.length > 0) ? docArray.shift() : null,
+            	error:null
 				}
 		
 			await client.close();
@@ -234,13 +234,13 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			return {
 					ok: false,
 					err
-      }
-    }
-  }
+      		}
+    	}
+  	}
 
-  /**
+  	/**
 	 * Operation find for mongoDB. 
-   * Retrieves many documents matching the query
+   	 * Retrieves many documents matching the query
 	 * If successful, returns {
 	 *   ok: true,
 	 *   data:{
@@ -253,13 +253,13 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	 *    ok: false,
 	 *    err: Error("some error here")
 	 * }
-  */
-  find = async (query: any, opts?: Object): Promise<TypeMongoResponse> => {
+  	*/
+  	find = async (query: any, opts?: Object): Promise<TypeMongoResponse> => {
 		let client;
 		const options = opts || {}
 
-		try{
-		  const client = await MongoClient.connect(this.url);
+		try {
+		  	const client = await MongoClient.connect(this.url);
 		  
 			const cursor: Cursor = await client
 				.db(this.dbName)
@@ -267,10 +267,10 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.find(query, options);
 
 
-      const data = {
+      		const data = {
 				count: await cursor.count(),
-        docs: await cursor.toArray(),
-        error: null
+        		docs: await cursor.toArray(),
+        		error: null
 			}
 			
 			await client.close()
@@ -278,16 +278,16 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				ok: true,
 				data
 			}
-    } catch(err) {
-				return {
-					ok: false,
-					err
-				}
-      }
+    	} catch(err) {
+			return {
+				ok: false,
+				err
+			}
+      	}
     }
 
 
-  /**
+  	/**
 	 * Operation updateOne 
 	 * Updates one document matching the query
 	 * 
@@ -295,7 +295,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	 * @param updates objects corresponding to the updates to make
 	 * @param opts options supported by mongodb. refer to mongodb docs.
 	 */
-  updateOne = async (query: any, updates:Object, opts?:Object): Promise<TypeMongoResponse> => {
+  	updateOne = async (query: any, updates:Object, opts?:Object): Promise<TypeMongoResponse> => {
 		let client;
 		const options = opts || {}
 
@@ -313,13 +313,13 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			}
 		} catch(err){
 			return {
-					ok: false,
-					err
+				ok: false,
+				err
 			}
 		}
-  }
+  	}
 
-  upsert = async (query: any, upserts: Object): Promise<boolean> => {
+  	upsert = async (query: any, upserts: Object): Promise<boolean> => {
 		let client;
 
 		try {
@@ -341,23 +341,23 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		}
 	}
 
-  set = (query: any, setOp: any) : Promise<TypeMongoResponse> => {
-      return this.updateOne(query, {
-        $set:setOp
-      })
-  };
+  	set = (query: any, setOp: any) : Promise<TypeMongoResponse> => {
+    	return this.updateOne(query, {
+        	$set:setOp
+      	})
+  	}
 	
 	pull = (query: any, pullOp: any) : Promise<TypeMongoResponse> => {
-      return this.updateOne(query, {
-        $pull:pullOp
-      })
-	};
+      	return this.updateOne(query, {
+        	$pull:pullOp
+      	})
+	}
 		
-  push = (query: any, pushOp: any) : Promise<TypeMongoResponse> => {
-      return this.updateOne(query, {
-        $push:pushOp
-      })
-  };
+  	push = (query: any, pushOp: any) : Promise<TypeMongoResponse> => {
+      	return this.updateOne(query, {
+        	$push:pushOp
+      	})
+  	}
 
 	/** 
 	 * count the number of documents matching the query.
@@ -379,5 +379,4 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			return 0;
 		}
 	}
-    
 }
