@@ -1,5 +1,10 @@
+export interface TypeMongoResponse {
+    ok: boolean;
+    err?: Error | string | Object;
+    data?: any;
+}
 export interface IWriter<T> {
-    insertOne(item: T, options?: Object): Promise<boolean>;
+    insertOne(item: T, options?: Object): Promise<TypeMongoResponse>;
     insertMany(items: T[], options?: Object): Promise<boolean>;
     updateOne(filter: any, updates: Object, options?: Object): Promise<boolean>;
     delete(filter: any): Promise<boolean>;
@@ -32,7 +37,26 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     private url;
     private dbName;
     constructor(config: MongoConfig);
-    insertOne(item: T, opts?: Object): Promise<boolean>;
+    /**
+     * Operation for mongoDB insertOne. Inserts one document into collection
+     *
+     * @param item a model object to be saved as a document
+     * @param opts mongodb insertOne options (all supported) Refer to mongodb docs.
+     *
+     * @return a typemongo response.
+     *
+     * If the operation was succesfull,
+     * returns {
+     *   ok: true
+     * }
+     *
+     * If the operation was not successfull,
+     * returns {
+     *   ok: false
+     *   err: Error("some error here")
+     * }
+     */
+    insertOne(item: T, opts?: Object): Promise<TypeMongoResponse>;
     insertMany(items: T[], opts?: Object): Promise<boolean>;
     /**
     * Deletes one doc matching the filter

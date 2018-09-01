@@ -241,6 +241,25 @@ var MongoRepository = /** @class */ (function () {
         this.url = config.url;
         this.dbName = config.dbName;
     }
+    /**
+     * Operation for mongoDB insertOne. Inserts one document into collection
+     *
+     * @param item a model object to be saved as a document
+     * @param opts mongodb insertOne options (all supported) Refer to mongodb docs.
+     *
+     * @return a typemongo response.
+     *
+     * If the operation was succesfull,
+     * returns {
+     *   ok: true
+     * }
+     *
+     * If the operation was not successfull,
+     * returns {
+     *   ok: false
+     *   err: Error("some error here")
+     * }
+     */
     MongoRepository.prototype.insertOne = function (item, opts) {
         return __awaiter(this, void 0, void 0, function () {
             var client, options, op, err_6;
@@ -261,10 +280,15 @@ var MongoRepository = /** @class */ (function () {
                     case 3:
                         op = _a.sent();
                         client.close();
-                        return [2 /*return*/, !!op.result.ok];
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok,
+                            }];
                     case 4:
                         err_6 = _a.sent();
-                        return [2 /*return*/, false];
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_6
+                            }];
                     case 5: return [2 /*return*/];
                 }
             });
