@@ -39,10 +39,13 @@ var mongodb_1 = require("mongodb");
 var MongoRepository = /** @class */ (function () {
     function MongoRepository(config) {
         var _this = this;
-        this.addToSet = function (filter, setOp) { return __awaiter(_this, void 0, void 0, function () {
+        /**
+           * [CAUTION] Under contruction
+           */
+        this.addToSet = function (query, setOp) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.updateOne(filter, {
+                    case 0: return [4 /*yield*/, this.updateOne(query, {
                             $addToSet: setOp
                         })];
                     case 1: return [2 /*return*/, _a.sent()];
@@ -50,24 +53,30 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-        * Retrieves one document matching the filter
+           * Operation for mongodb findOne.
+         * Retrieves one document matching the query.
+           *
+           * @param query a query to match the document.
+           * @param opts  options to be passed. refer to mongodb docs.
+           *
+           * @returns
         */
-        this.findOne = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
-            var client, options, cursor, docArray, result, _a, err_1;
+        this.findOne = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, cursor, docArray, data, _a, err_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         options = opts || {};
                         _b.label = 1;
                     case 1:
-                        _b.trys.push([1, 6, , 7]);
+                        _b.trys.push([1, 7, , 8]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client = _b.sent();
                         return [4 /*yield*/, client
                                 .db(this.dbName)
                                 .collection(this.collectionName)
-                                .findOne(filter, options)];
+                                .findOne(query, options)];
                     case 3:
                         cursor = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
@@ -76,42 +85,59 @@ var MongoRepository = /** @class */ (function () {
                         _a = {};
                         return [4 /*yield*/, cursor.count()];
                     case 5:
-                        result = (_a.count = _b.sent(),
+                        data = (_a.count = _b.sent(),
                             _a.doc = (docArray.length > 0) ? docArray.shift() : null,
                             _a.error = null,
                             _a);
-                        client.close();
-                        return [2 /*return*/, result];
+                        return [4 /*yield*/, client.close()];
                     case 6:
+                        _b.sent();
+                        return [2 /*return*/, {
+                                ok: true,
+                                data: data
+                            }];
+                    case 7:
                         err_1 = _b.sent();
                         return [2 /*return*/, {
-                                count: 0,
-                                doc: null,
-                                error: err_1
+                                ok: false,
+                                err: err_1
                             }];
-                    case 7: return [2 /*return*/];
+                    case 8: return [2 /*return*/];
                 }
             });
         }); };
         /**
-        * Retrieves many documents matching the filter
+           * Operation find for mongoDB.
+         * Retrieves many documents matching the query
+           * If successful, returns {
+           *   ok: true,
+           *   data:{
+           *      count: <somenumber>
+           *      docs: [... a list of docs...]
+           *   }
+           * }
+           *
+           * If not successful, returns {
+           *    ok: false,
+           *    err: Error("some error here")
+           * }
         */
-        this.find = function (filter, opts) { return __awaiter(_this, void 0, void 0, function () {
-            var client, options, client_1, cursor, result, _a, err_2;
+        this.find = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, client_1, cursor, data, _a, err_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         options = opts || {};
                         _b.label = 1;
                     case 1:
-                        _b.trys.push([1, 6, , 7]);
+                        _b.trys.push([1, 7, , 8]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client_1 = _b.sent();
                         return [4 /*yield*/, client_1
                                 .db(this.dbName)
                                 .collection(this.collectionName)
-                                .find(filter, options)];
+                                .find(query, options)];
                     case 3:
                         cursor = _b.sent();
                         _a = {};
@@ -120,26 +146,35 @@ var MongoRepository = /** @class */ (function () {
                         _a.count = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
                     case 5:
-                        result = (_a.docs = _b.sent(),
+                        data = (_a.docs = _b.sent(),
                             _a.error = null,
                             _a);
-                        client_1.close();
-                        return [2 /*return*/, result];
+                        return [4 /*yield*/, client_1.close()];
                     case 6:
+                        _b.sent();
+                        return [2 /*return*/, {
+                                ok: true,
+                                data: data
+                            }];
+                    case 7:
                         err_2 = _b.sent();
                         return [2 /*return*/, {
-                                count: 0,
-                                docs: [],
-                                error: err_2
+                                ok: false,
+                                err: err_2
                             }];
-                    case 7: return [2 /*return*/];
+                    case 8: return [2 /*return*/];
                 }
             });
         }); };
         /**
-        * Updates one doc matching the filter with the given update
-        */
-        this.updateOne = function (filter, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
+           * Operation updateOne
+           * Updates one document matching the query
+           *
+           * @param query a query to match documents to update
+           * @param updates objects corresponding to the updates to make
+           * @param opts options supported by mongodb. refer to mongodb docs.
+           */
+        this.updateOne = function (query, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, client_2, op, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -147,26 +182,33 @@ var MongoRepository = /** @class */ (function () {
                         options = opts || {};
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client_2 = _a.sent();
                         return [4 /*yield*/, client_2
                                 .db(this.dbName)
                                 .collection(this.collectionName)
-                                .updateOne(filter, updates, options)];
+                                .updateOne(query, updates, options)];
                     case 3:
                         op = _a.sent();
-                        client_2.close();
-                        return [2 /*return*/, !!op.result.ok];
+                        return [4 /*yield*/, client_2.close()];
                     case 4:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok
+                            }];
+                    case 5:
                         err_3 = _a.sent();
-                        return [2 /*return*/, false];
-                    case 5: return [2 /*return*/];
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_3
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
-        this.upsert = function (filter, upserts) { return __awaiter(_this, void 0, void 0, function () {
+        this.upsert = function (query, upserts) { return __awaiter(_this, void 0, void 0, function () {
             var client, client_3, op, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -178,7 +220,7 @@ var MongoRepository = /** @class */ (function () {
                         return [4 /*yield*/, client_3
                                 .db(this.dbName)
                                 .collection(this.collectionName)
-                                .updateOne(filter, upserts, {
+                                .updateOne(query, upserts, {
                                 upsert: true
                             })];
                     case 2:
@@ -192,18 +234,18 @@ var MongoRepository = /** @class */ (function () {
                 }
             });
         }); };
-        this.set = function (filter, setOp) {
-            return _this.updateOne(filter, {
+        this.set = function (query, setOp) {
+            return _this.updateOne(query, {
                 $set: setOp
             });
         };
-        this.pull = function (filter, pullOp) {
-            return _this.updateOne(filter, {
+        this.pull = function (query, pullOp) {
+            return _this.updateOne(query, {
                 $pull: pullOp
             });
         };
-        this.push = function (filter, pushOp) {
-            return _this.updateOne(filter, {
+        this.push = function (query, pushOp) {
+            return _this.updateOne(query, {
                 $push: pushOp
             });
         };
@@ -241,6 +283,26 @@ var MongoRepository = /** @class */ (function () {
         this.url = config.url;
         this.dbName = config.dbName;
     }
+    /**
+     * Operation for mongoDB insertOne.
+     * Inserts one document into collection
+     *
+     * @param item a model object to be saved as a document
+     * @param opts mongodb insertOne options (all supported) Refer to mongodb docs.
+     *
+     * @return a typemongo response.
+     *
+     * If the operation was successful,
+     * returns {
+     *   ok: true
+     * }
+     *
+     * If the operation was not successful,
+     * returns {
+     *   ok: false
+     *   err: Error("some error here")
+     * }
+     */
     MongoRepository.prototype.insertOne = function (item, opts) {
         return __awaiter(this, void 0, void 0, function () {
             var client, options, op, err_6;
@@ -250,7 +312,7 @@ var MongoRepository = /** @class */ (function () {
                         options = opts || {};
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client = _a.sent();
@@ -260,16 +322,44 @@ var MongoRepository = /** @class */ (function () {
                                 .insertOne(item, options)];
                     case 3:
                         op = _a.sent();
-                        client.close();
-                        return [2 /*return*/, !!op.result.ok];
+                        return [4 /*yield*/, client.close()];
                     case 4:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok,
+                            }];
+                    case 5:
                         err_6 = _a.sent();
-                        return [2 /*return*/, false];
-                    case 5: return [2 /*return*/];
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_6
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Operation for mongodb insertMany.
+     * Inserts multiple documents at once.
+     *
+     * @param items a list of model objects to be saved as documents
+     * @param opts mongodb insertMany options (all are supported). Refer to mongodb docs
+     *
+     * @return a typemongo response
+     *
+     * If successful
+     * returns {
+     * 		ok: true
+     * }
+     *
+     *
+     * If not successful
+     * returns {
+     *    ok:false,
+     * 		err: Error("some error here")
+     * }
+     */
     MongoRepository.prototype.insertMany = function (items, opts) {
         return __awaiter(this, void 0, void 0, function () {
             var client, options, op, err_7;
@@ -279,7 +369,7 @@ var MongoRepository = /** @class */ (function () {
                         options = opts || {};
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
                         client = _a.sent();
@@ -289,41 +379,72 @@ var MongoRepository = /** @class */ (function () {
                                 .insertMany(items, options)];
                     case 3:
                         op = _a.sent();
-                        client.close();
-                        return [2 /*return*/, !!op.result.ok];
+                        return [4 /*yield*/, client.close()];
                     case 4:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok
+                            }];
+                    case 5:
                         err_7 = _a.sent();
-                        return [2 /*return*/, false];
-                    case 5: return [2 /*return*/];
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_7
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
     };
     /**
-    * Deletes one doc matching the filter
+       * Operation for mongoDB deleteOne
+       * Deletes one doc matching the query
+       *
+       * @param query a query to match the document to delete.
+       * @param opts  options for deleteOne. refer to mongodb docs.
+       *
+       * @returns a typemongo response
+       * If successful returns {
+     *   ok: true
+       *	}
+       *
+       * If not successful returns {
+     *    ok: false,
+     *    err: Error("some error here")
+       * }
     */
-    MongoRepository.prototype.delete = function (filter) {
+    MongoRepository.prototype.deleteOne = function (query, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, op, err_8;
+            var client, options, op, err_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        options = opts || {};
+                        _a.label = 1;
                     case 1:
+                        _a.trys.push([1, 5, , 6]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                    case 2:
                         client = _a.sent();
                         return [4 /*yield*/, client
                                 .db(this.dbName)
                                 .collection(this.collectionName)
-                                .deleteOne(filter)];
-                    case 2:
-                        op = _a.sent();
-                        client.close();
-                        return [2 /*return*/, !!op.result.ok];
+                                .deleteOne(query, opts)];
                     case 3:
+                        op = _a.sent();
+                        return [4 /*yield*/, client.close()];
+                    case 4:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok
+                            }];
+                    case 5:
                         err_8 = _a.sent();
-                        return [2 /*return*/, false];
-                    case 4: return [2 /*return*/];
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_8
+                            }];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
