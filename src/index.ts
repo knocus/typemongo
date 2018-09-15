@@ -14,9 +14,11 @@ export interface TypeMongoResponse {
 	ok: boolean;
 	err?: Error | string | Object;
 	data? : any;	
+	cursor?: any;
 }
 
 export interface IWriter<T> {
+	aggregate(pipeline: any[]): Promise<TypeMongoResponse>;
 	insertOne(item: T, options?:Object): Promise<TypeMongoResponse>;
 	insertMany(items: T[], options?:Object):Promise<TypeMongoResponse>;
   	updateOne(query:any, updates:Object, options?:Object): Promise<TypeMongoResponse>;
@@ -55,6 +57,48 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
   	}
 
 	/**
+	 * Basic support for MongoDB aggregate. 
+	 *
+	 * @param pipeline a list of aggregation operations
+	 * 
+	 * @return a typemongo response.
+	 * 
+	 * If the operation was successful, 
+	 * returns {
+	 *   ok: true,
+	 *   data: ...somedata
+	 * }
+	 * 
+	 * If the operation was not successful,
+	 * returns {
+	 *   ok: false
+	 *   err: Error("some error here")
+	 * }
+	*/
+	async aggregate(pipeline: any[]): Promise<TypeMongoResponse> {
+		let client;
+		try{
+			client  = await MongoClient.connect(this.url);
+			const cursor = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.aggregate(pipeline);
+
+			await client.close();
+
+			return {
+				ok:true,
+				cursor
+			}
+		} catch(err){
+			return {
+				ok: false,
+				err
+			}
+		}
+	}	  
+
+	/**
 	 * Operation for mongoDB insertOne. 
 	 * Inserts one document into collection 
 	 * 
@@ -74,7 +118,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	 *   err: Error("some error here")
 	 * }
 	 */
-  	async insertOne(item: T, opts?:Object): Promise<TypeMongoResponse> {
+	 async insertOne(item: T, opts?:Object): Promise<TypeMongoResponse> {
 		let client;
 		const options = opts || {};
 

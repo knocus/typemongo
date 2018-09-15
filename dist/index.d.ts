@@ -2,8 +2,10 @@ export interface TypeMongoResponse {
     ok: boolean;
     err?: Error | string | Object;
     data?: any;
+    cursor?: any;
 }
 export interface IWriter<T> {
+    aggregate(pipeline: any[]): Promise<TypeMongoResponse>;
     insertOne(item: T, options?: Object): Promise<TypeMongoResponse>;
     insertMany(items: T[], options?: Object): Promise<TypeMongoResponse>;
     updateOne(query: any, updates: Object, options?: Object): Promise<TypeMongoResponse>;
@@ -27,6 +29,26 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     private url;
     private dbName;
     constructor(config: MongoConfig);
+    /**
+     * Basic support for MongoDB aggregate.
+     *
+     * @param pipeline a list of aggregation operations
+     *
+     * @return a typemongo response.
+     *
+     * If the operation was successful,
+     * returns {
+     *   ok: true,
+     *   data: ...somedata
+     * }
+     *
+     * If the operation was not successful,
+     * returns {
+     *   ok: false
+     *   err: Error("some error here")
+     * }
+    */
+    aggregate(pipeline: any[]): Promise<TypeMongoResponse>;
     /**
      * Operation for mongoDB insertOne.
      * Inserts one document into collection
@@ -89,44 +111,44 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
     */
     deleteOne(query: any, opts?: Object): Promise<TypeMongoResponse>;
     /**
-       * [CAUTION] Under contruction
-       */
+     * [CAUTION] Under contruction
+     */
     addToSet: (query: any, setOp: any) => Promise<TypeMongoResponse>;
     /**
-       * Operation for mongodb findOne.
+     * Operation for mongodb findOne.
      * Retrieves one document matching the query.
-       *
-       * @param query a query to match the document.
-       * @param opts  options to be passed. refer to mongodb docs.
-       *
-       * @returns
+     *
+     * @param query a query to match the document.
+     * @param opts  options to be passed. refer to mongodb docs.
+     *
+     * @returns
     */
     findOne: (query: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
-       * Operation find for mongoDB.
+     * Operation find for mongoDB.
      * Retrieves many documents matching the query
-       * If successful, returns {
-       *   ok: true,
-       *   data:{
-       *      count: <somenumber>
-       *      docs: [... a list of docs...]
-       *   }
-       * }
-       *
-       * If not successful, returns {
-       *    ok: false,
-       *    err: Error("some error here")
-       * }
+     * If successful, returns {
+     *   ok: true,
+     *   data:{
+     *      count: <somenumber>
+     *      docs: [... a list of docs...]
+     *   }
+     * }
+     *
+     * If not successful, returns {
+     *    ok: false,
+     *    err: Error("some error here")
+     * }
     */
     find: (query: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
-       * Operation updateOne
-       * Updates one document matching the query
-       *
-       * @param query a query to match documents to update
-       * @param updates objects corresponding to the updates to make
-       * @param opts options supported by mongodb. refer to mongodb docs.
-       */
+     * Operation updateOne
+     * Updates one document matching the query
+     *
+     * @param query a query to match documents to update
+     * @param updates objects corresponding to the updates to make
+     * @param opts options supported by mongodb. refer to mongodb docs.
+     */
     updateOne: (query: any, updates: Object, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     upsert: (query: any, upserts: Object) => Promise<boolean>;
     set: (query: any, setOp: any) => Promise<TypeMongoResponse>;

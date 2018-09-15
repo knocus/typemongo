@@ -40,8 +40,8 @@ var MongoRepository = /** @class */ (function () {
     function MongoRepository(config) {
         var _this = this;
         /**
-           * [CAUTION] Under contruction
-           */
+         * [CAUTION] Under contruction
+         */
         this.addToSet = function (query, setOp) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -53,13 +53,13 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-           * Operation for mongodb findOne.
+         * Operation for mongodb findOne.
          * Retrieves one document matching the query.
-           *
-           * @param query a query to match the document.
-           * @param opts  options to be passed. refer to mongodb docs.
-           *
-           * @returns
+         *
+         * @param query a query to match the document.
+         * @param opts  options to be passed. refer to mongodb docs.
+         *
+         * @returns
         */
         this.findOne = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, cursor, docArray, data, _a, err_1;
@@ -107,20 +107,20 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-           * Operation find for mongoDB.
+         * Operation find for mongoDB.
          * Retrieves many documents matching the query
-           * If successful, returns {
-           *   ok: true,
-           *   data:{
-           *      count: <somenumber>
-           *      docs: [... a list of docs...]
-           *   }
-           * }
-           *
-           * If not successful, returns {
-           *    ok: false,
-           *    err: Error("some error here")
-           * }
+         * If successful, returns {
+         *   ok: true,
+         *   data:{
+         *      count: <somenumber>
+         *      docs: [... a list of docs...]
+         *   }
+         * }
+         *
+         * If not successful, returns {
+         *    ok: false,
+         *    err: Error("some error here")
+         * }
         */
         this.find = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, client_1, cursor, data, _a, err_2;
@@ -167,13 +167,13 @@ var MongoRepository = /** @class */ (function () {
             });
         }); };
         /**
-           * Operation updateOne
-           * Updates one document matching the query
-           *
-           * @param query a query to match documents to update
-           * @param updates objects corresponding to the updates to make
-           * @param opts options supported by mongodb. refer to mongodb docs.
-           */
+         * Operation updateOne
+         * Updates one document matching the query
+         *
+         * @param query a query to match documents to update
+         * @param updates objects corresponding to the updates to make
+         * @param opts options supported by mongodb. refer to mongodb docs.
+         */
         this.updateOne = function (query, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
             var client, options, client_2, op, err_3;
             return __generator(this, function (_a) {
@@ -284,6 +284,59 @@ var MongoRepository = /** @class */ (function () {
         this.dbName = config.dbName;
     }
     /**
+     * Basic support for MongoDB aggregate.
+     *
+     * @param pipeline a list of aggregation operations
+     *
+     * @return a typemongo response.
+     *
+     * If the operation was successful,
+     * returns {
+     *   ok: true,
+     *   data: ...somedata
+     * }
+     *
+     * If the operation was not successful,
+     * returns {
+     *   ok: false
+     *   err: Error("some error here")
+     * }
+    */
+    MongoRepository.prototype.aggregate = function (pipeline) {
+        return __awaiter(this, void 0, void 0, function () {
+            var client, cursor, err_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                    case 1:
+                        client = _a.sent();
+                        return [4 /*yield*/, client
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .aggregate(pipeline)];
+                    case 2:
+                        cursor = _a.sent();
+                        return [4 /*yield*/, client.close()];
+                    case 3:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: true,
+                                cursor: cursor
+                            }];
+                    case 4:
+                        err_6 = _a.sent();
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_6
+                            }];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
      * Operation for mongoDB insertOne.
      * Inserts one document into collection
      *
@@ -305,7 +358,7 @@ var MongoRepository = /** @class */ (function () {
      */
     MongoRepository.prototype.insertOne = function (item, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_6;
+            var client, options, op, err_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -329,10 +382,10 @@ var MongoRepository = /** @class */ (function () {
                                 ok: !!op.result.ok,
                             }];
                     case 5:
-                        err_6 = _a.sent();
+                        err_7 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_6
+                                err: err_7
                             }];
                     case 6: return [2 /*return*/];
                 }
@@ -362,7 +415,7 @@ var MongoRepository = /** @class */ (function () {
      */
     MongoRepository.prototype.insertMany = function (items, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_7;
+            var client, options, op, err_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -386,10 +439,10 @@ var MongoRepository = /** @class */ (function () {
                                 ok: !!op.result.ok
                             }];
                     case 5:
-                        err_7 = _a.sent();
+                        err_8 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_7
+                                err: err_8
                             }];
                     case 6: return [2 /*return*/];
                 }
@@ -415,7 +468,7 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.deleteOne = function (query, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_8;
+            var client, options, op, err_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -439,10 +492,10 @@ var MongoRepository = /** @class */ (function () {
                                 ok: !!op.result.ok
                             }];
                     case 5:
-                        err_8 = _a.sent();
+                        err_9 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_8
+                                err: err_9
                             }];
                     case 6: return [2 /*return*/];
                 }
