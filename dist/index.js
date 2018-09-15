@@ -293,7 +293,10 @@ var MongoRepository = /** @class */ (function () {
      * If the operation was successful,
      * returns {
      *   ok: true,
-     *   data: ...somedata
+     *   data: {
+     * 	    count:500,
+     *      docs:[...]
+     * 	 }
      * }
      *
      * If the operation was not successful,
@@ -304,11 +307,11 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.aggregate = function (pipeline) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, cursor, err_6;
+            var client, cursor, docs, count, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 4, , 5]);
+                        _a.trys.push([0, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 1:
                         client = _a.sent();
@@ -318,20 +321,27 @@ var MongoRepository = /** @class */ (function () {
                                 .aggregate(pipeline)];
                     case 2:
                         cursor = _a.sent();
-                        return [4 /*yield*/, client.close()];
+                        return [4 /*yield*/, cursor.toArray()];
                     case 3:
+                        docs = _a.sent();
+                        count = docs.length;
+                        return [4 /*yield*/, client.close()];
+                    case 4:
                         _a.sent();
                         return [2 /*return*/, {
                                 ok: true,
-                                cursor: cursor
+                                data: {
+                                    count: count,
+                                    docs: docs
+                                }
                             }];
-                    case 4:
+                    case 5:
                         err_6 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
                                 err: err_6
                             }];
-                    case 5: return [2 /*return*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
