@@ -7,14 +7,14 @@ import {
   	DeleteWriteOpResultObject,
   	InsertOneWriteOpResult,
   	UpdateWriteOpResult,
-	InsertWriteOpResult
+	InsertWriteOpResult,
+	AggregationCursor
 } from 'mongodb';
 
 export interface TypeMongoResponse {
 	ok: boolean;
 	err?: Error | string | Object;
-	data? : any;	
-	cursor?: any;
+	data? : any;
 }
 
 export interface IWriter<T> {
@@ -66,7 +66,10 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	 * If the operation was successful, 
 	 * returns {
 	 *   ok: true,
-	 *   data: ...somedata
+	 *   data: {
+	 * 	    count:500,
+	 *      docs:[...]
+	 * 	 }
 	 * }
 	 * 
 	 * If the operation was not successful,
@@ -79,16 +82,20 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		let client;
 		try{
 			client  = await MongoClient.connect(this.url);
-			const cursor = await client
+			const cursor:AggregationCursor = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
 				.aggregate(pipeline);
-
+			let docs = await cursor.toArray();
+			let count = docs.length;
 			await client.close();
 
 			return {
 				ok:true,
-				cursor
+				data :{
+					count,
+					docs
+				}
 			}
 		} catch(err){
 			return {

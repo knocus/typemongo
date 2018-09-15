@@ -2,7 +2,6 @@ export interface TypeMongoResponse {
     ok: boolean;
     err?: Error | string | Object;
     data?: any;
-    cursor?: any;
 }
 export interface IWriter<T> {
     aggregate(pipeline: any[]): Promise<TypeMongoResponse>;
@@ -39,7 +38,10 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
      * If the operation was successful,
      * returns {
      *   ok: true,
-     *   data: ...somedata
+     *   data: {
+     * 	    count:500,
+     *      docs:[...]
+     * 	 }
      * }
      *
      * If the operation was not successful,
