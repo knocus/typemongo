@@ -140,6 +140,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 			await client.close();
 			return {
 				ok: !!op.result.ok,
+				data:op
 			}
 
 		} catch(err) {
@@ -185,7 +186,8 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 
 			await client.close();
 			return {
-				ok: !!op.result.ok
+				ok: !!op.result.ok,
+				data: op
 			}
 		} catch (err) {
 			return {

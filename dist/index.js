@@ -390,6 +390,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, {
                                 ok: !!op.result.ok,
+                                data: op
                             }];
                     case 5:
                         err_7 = _a.sent();
@@ -446,7 +447,8 @@ var MongoRepository = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         return [2 /*return*/, {
-                                ok: !!op.result.ok
+                                ok: !!op.result.ok,
+                                data: op
                             }];
                     case 5:
                         err_8 = _a.sent();
