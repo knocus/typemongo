@@ -319,9 +319,9 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 				.collection(this.collectionName)
 				.find(query, options);
 
-
+			const applySkipLimit = false;
       		const data = {
-				count: await cursor.count(),
+				count: await cursor.count(applySkipLimit),
         		docs: await cursor.toArray(),
         		error: null
 			}

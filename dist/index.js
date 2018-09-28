@@ -123,7 +123,7 @@ var MongoRepository = /** @class */ (function () {
          * }
         */
         this.find = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
-            var client, options, client_1, cursor, data, _a, err_2;
+            var client, options, client_1, cursor, applySkipLimit, data, _a, err_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -140,8 +140,9 @@ var MongoRepository = /** @class */ (function () {
                                 .find(query, options)];
                     case 3:
                         cursor = _b.sent();
+                        applySkipLimit = false;
                         _a = {};
-                        return [4 /*yield*/, cursor.count()];
+                        return [4 /*yield*/, cursor.count(applySkipLimit)];
                     case 4:
                         _a.count = _b.sent();
                         return [4 /*yield*/, cursor.toArray()];
