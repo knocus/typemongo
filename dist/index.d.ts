@@ -12,6 +12,7 @@ export interface IWriter<T> {
     set(query: any, setOp: any): Promise<TypeMongoResponse>;
     pull(query: any, pullOp: any): Promise<TypeMongoResponse>;
     push(query: any, pushOp: any): Promise<TypeMongoResponse>;
+    findOneAndUpdate(query: any, updates: Object, opts?: Object): Promise<TypeMongoResponse>;
 }
 export interface IReader<T> {
     find(query: any, options?: Object): Promise<TypeMongoResponse>;
@@ -143,6 +144,7 @@ export declare abstract class MongoRepository<T> implements IWriter<T>, IReader<
      * }
     */
     find: (query: any, opts?: Object | undefined) => Promise<TypeMongoResponse>;
+    findOneAndUpdate: (filter: any, updates: Object, opts?: Object | undefined) => Promise<TypeMongoResponse>;
     /**
      * Operation updateOne
      * Updates one document matching the query

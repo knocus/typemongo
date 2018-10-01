@@ -8,7 +8,8 @@ import {
   	InsertOneWriteOpResult,
   	UpdateWriteOpResult,
 	InsertWriteOpResult,
-	AggregationCursor
+	AggregationCursor,
+	FindAndModifyWriteOpResultObject
 } from 'mongodb';
 
 export interface TypeMongoResponse {
@@ -25,7 +26,8 @@ export interface IWriter<T> {
   	deleteOne(query:any, options?: Object): Promise<TypeMongoResponse>;
   	set(query: any, setOp: any) : Promise<TypeMongoResponse>;
   	pull(query: any, pullOp: any) : Promise<TypeMongoResponse>;
-  	push(query: any, pushOp: any) : Promise<TypeMongoResponse>;
+	push(query: any, pushOp: any) : Promise<TypeMongoResponse>;
+	findOneAndUpdate(query:any, updates:Object, opts?: Object) : Promise<TypeMongoResponse>;
 }
 
 export interface IReader<T> {
@@ -339,6 +341,29 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
       	}
     }
 
+	findOneAndUpdate = async (filter:any, updates:Object, opts?:Object): Promise<TypeMongoResponse> => {
+		let client;
+		const options = opts || {}
+
+		try{
+			client = await MongoClient.connect(this.url);
+
+			const op = await client
+				.db(this.dbName)
+				.collection(this.collectionName)
+				.findOneAndUpdate(filter, updates, options)
+			await client.close();
+
+			return {
+				ok: !!op.ok
+			}
+		} catch(err){
+			return {
+				ok: false,
+				err
+			}
+		}
+	}
 
   	/**
 	 * Operation updateOne 
@@ -353,7 +378,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {}
 
 		try {
-			const client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url);
 
 			const op: UpdateWriteOpResult = await client
 				.db(this.dbName)

@@ -167,16 +167,8 @@ var MongoRepository = /** @class */ (function () {
                 }
             });
         }); };
-        /**
-         * Operation updateOne
-         * Updates one document matching the query
-         *
-         * @param query a query to match documents to update
-         * @param updates objects corresponding to the updates to make
-         * @param opts options supported by mongodb. refer to mongodb docs.
-         */
-        this.updateOne = function (query, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
-            var client, options, client_2, op, err_3;
+        this.findOneAndUpdate = function (filter, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, op, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -186,18 +178,18 @@ var MongoRepository = /** @class */ (function () {
                         _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
-                        client_2 = _a.sent();
-                        return [4 /*yield*/, client_2
+                        client = _a.sent();
+                        return [4 /*yield*/, client
                                 .db(this.dbName)
                                 .collection(this.collectionName)
-                                .updateOne(query, updates, options)];
+                                .findOneAndUpdate(filter, updates, options)];
                     case 3:
                         op = _a.sent();
-                        return [4 /*yield*/, client_2.close()];
+                        return [4 /*yield*/, client.close()];
                     case 4:
                         _a.sent();
                         return [2 /*return*/, {
-                                ok: !!op.result.ok
+                                ok: !!op.ok
                             }];
                     case 5:
                         err_3 = _a.sent();
@@ -209,16 +201,58 @@ var MongoRepository = /** @class */ (function () {
                 }
             });
         }); };
+        /**
+         * Operation updateOne
+         * Updates one document matching the query
+         *
+         * @param query a query to match documents to update
+         * @param updates objects corresponding to the updates to make
+         * @param opts options supported by mongodb. refer to mongodb docs.
+         */
+        this.updateOne = function (query, updates, opts) { return __awaiter(_this, void 0, void 0, function () {
+            var client, options, op, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        options = opts || {};
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 5, , 6]);
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                    case 2:
+                        client = _a.sent();
+                        return [4 /*yield*/, client
+                                .db(this.dbName)
+                                .collection(this.collectionName)
+                                .updateOne(query, updates, options)];
+                    case 3:
+                        op = _a.sent();
+                        return [4 /*yield*/, client.close()];
+                    case 4:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                ok: !!op.result.ok
+                            }];
+                    case 5:
+                        err_4 = _a.sent();
+                        return [2 /*return*/, {
+                                ok: false,
+                                err: err_4
+                            }];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        }); };
         this.upsert = function (query, upserts) { return __awaiter(_this, void 0, void 0, function () {
-            var client, client_3, op, err_4;
+            var client, client_2, op, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 1:
-                        client_3 = _a.sent();
-                        return [4 /*yield*/, client_3
+                        client_2 = _a.sent();
+                        return [4 /*yield*/, client_2
                                 .db(this.dbName)
                                 .collection(this.collectionName)
                                 .updateOne(query, upserts, {
@@ -226,10 +260,10 @@ var MongoRepository = /** @class */ (function () {
                             })];
                     case 2:
                         op = _a.sent();
-                        client_3.close();
+                        client_2.close();
                         return [2 /*return*/, !!op.result.ok];
                     case 3:
-                        err_4 = _a.sent();
+                        err_5 = _a.sent();
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }
@@ -254,7 +288,7 @@ var MongoRepository = /** @class */ (function () {
          * count the number of documents matching the query.
         */
         this.countDocuments = function (query, opts) { return __awaiter(_this, void 0, void 0, function () {
-            var client, options, client_4, count, err_5;
+            var client, options, client_3, count, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -264,17 +298,17 @@ var MongoRepository = /** @class */ (function () {
                         _a.trys.push([1, 4, , 5]);
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
                     case 2:
-                        client_4 = _a.sent();
-                        return [4 /*yield*/, client_4
+                        client_3 = _a.sent();
+                        return [4 /*yield*/, client_3
                                 .db(this.dbName)
                                 .collection(this.collectionName)
                                 .countDocuments(query, options)];
                     case 3:
                         count = _a.sent();
-                        client_4.close();
+                        client_3.close();
                         return [2 /*return*/, count];
                     case 4:
-                        err_5 = _a.sent();
+                        err_6 = _a.sent();
                         return [2 /*return*/, 0];
                     case 5: return [2 /*return*/];
                 }
@@ -308,7 +342,7 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.aggregate = function (pipeline) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, cursor, docs, count, err_6;
+            var client, cursor, docs, count, err_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -337,10 +371,10 @@ var MongoRepository = /** @class */ (function () {
                                 }
                             }];
                     case 5:
-                        err_6 = _a.sent();
+                        err_7 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_6
+                                err: err_7
                             }];
                     case 6: return [2 /*return*/];
                 }
@@ -369,7 +403,7 @@ var MongoRepository = /** @class */ (function () {
      */
     MongoRepository.prototype.insertOne = function (item, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_7;
+            var client, options, op, err_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -394,10 +428,10 @@ var MongoRepository = /** @class */ (function () {
                                 data: op
                             }];
                     case 5:
-                        err_7 = _a.sent();
+                        err_8 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_7
+                                err: err_8
                             }];
                     case 6: return [2 /*return*/];
                 }
@@ -427,7 +461,7 @@ var MongoRepository = /** @class */ (function () {
      */
     MongoRepository.prototype.insertMany = function (items, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_8;
+            var client, options, op, err_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -452,10 +486,10 @@ var MongoRepository = /** @class */ (function () {
                                 data: op
                             }];
                     case 5:
-                        err_8 = _a.sent();
+                        err_9 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_8
+                                err: err_9
                             }];
                     case 6: return [2 /*return*/];
                 }
@@ -481,7 +515,7 @@ var MongoRepository = /** @class */ (function () {
     */
     MongoRepository.prototype.deleteOne = function (query, opts) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, options, op, err_9;
+            var client, options, op, err_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -505,10 +539,10 @@ var MongoRepository = /** @class */ (function () {
                                 ok: !!op.result.ok
                             }];
                     case 5:
-                        err_9 = _a.sent();
+                        err_10 = _a.sent();
                         return [2 /*return*/, {
                                 ok: false,
-                                err: err_9
+                                err: err_10
                             }];
                     case 6: return [2 /*return*/];
                 }
