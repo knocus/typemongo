@@ -83,7 +83,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 	async aggregate(pipeline: any[]): Promise<TypeMongoResponse> {
 		let client;
 		try{
-			client  = await MongoClient.connect(this.url);
+			client  = await MongoClient.connect(this.url, { useNewUrlParser: true });
 			const cursor:AggregationCursor = await client
 				.db(this.dbName)
 				.collection(this.collectionName)
@@ -132,7 +132,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {};
 
 		try {
-			client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const op: InsertOneWriteOpResult = await client
 				.db(this.dbName)
@@ -179,7 +179,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {};
 
 		try {
-			client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const op: InsertWriteOpResult = await client
 				.db(this.dbName)
@@ -221,7 +221,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		let client;
 		const options = opts || {}
 		try {
-			client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 			
 			const op: DeleteWriteOpResultObject = await client
 				.db(this.dbName)
@@ -265,7 +265,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {}
 
     	try{
-			client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const cursor: Cursor = await client
 				.db(this.dbName)
@@ -314,7 +314,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {}
 
 		try {
-		  	const client = await MongoClient.connect(this.url);
+		  	const client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 		  
 			const cursor: Cursor = await client
 				.db(this.dbName)
@@ -346,7 +346,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {}
 
 		try{
-			client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const op = await client
 				.db(this.dbName)
@@ -378,7 +378,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		const options = opts || {}
 
 		try {
-			client = await MongoClient.connect(this.url);
+			client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const op: UpdateWriteOpResult = await client
 				.db(this.dbName)
@@ -401,7 +401,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		let client;
 
 		try {
-			const client = await MongoClient.connect(this.url);
+			const client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const op: UpdateWriteOpResult = await client
 				.db(this.dbName)
@@ -444,7 +444,7 @@ export abstract class MongoRepository<T> implements IWriter<T>, IReader<T> {
 		let client;
 		const options = opts || {}
 		try {
-			const client = await MongoClient.connect(this.url);
+			const client = await MongoClient.connect(this.url, { useNewUrlParser: true });
 
 			const count = await client
 				.db(this.dbName)

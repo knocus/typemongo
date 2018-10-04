@@ -70,7 +70,7 @@ var MongoRepository = /** @class */ (function () {
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 7, , 8]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client = _b.sent();
                         return [4 /*yield*/, client
@@ -131,7 +131,7 @@ var MongoRepository = /** @class */ (function () {
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 7, , 8]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client_1 = _b.sent();
                         return [4 /*yield*/, client_1
@@ -176,7 +176,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 5, , 6]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client = _a.sent();
                         return [4 /*yield*/, client
@@ -218,7 +218,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 5, , 6]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client = _a.sent();
                         return [4 /*yield*/, client
@@ -249,7 +249,7 @@ var MongoRepository = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 1:
                         client_2 = _a.sent();
                         return [4 /*yield*/, client_2
@@ -296,7 +296,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 4, , 5]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client_3 = _a.sent();
                         return [4 /*yield*/, client_3
@@ -347,7 +347,7 @@ var MongoRepository = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 1:
                         client = _a.sent();
                         return [4 /*yield*/, client
@@ -411,7 +411,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 5, , 6]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client = _a.sent();
                         return [4 /*yield*/, client
@@ -469,7 +469,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 5, , 6]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client = _a.sent();
                         return [4 /*yield*/, client
@@ -523,7 +523,7 @@ var MongoRepository = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 5, , 6]);
-                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url)];
+                        return [4 /*yield*/, mongodb_1.MongoClient.connect(this.url, { useNewUrlParser: true })];
                     case 2:
                         client = _a.sent();
                         return [4 /*yield*/, client
